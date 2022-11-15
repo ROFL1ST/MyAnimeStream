@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart';
 
@@ -6,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:my_anime_stream/API/model/detail.dart';
 import 'package:my_anime_stream/API/model/episodeModa.dart';
 import 'package:my_anime_stream/API/model/recent.dart';
+import 'package:my_anime_stream/API/model/search.dart';
 import 'package:my_anime_stream/API/model/top.dart';
 
 class ApiService {
@@ -22,7 +24,7 @@ class ApiService {
       'Accept': 'application/json',
     };
 
-    final res = await http.get(urlApi);
+    final res = await http.get(urlApi, headers: requestHeaders);
 
     if (res.statusCode == 200) {
       return topFromJson(res.body.toString());
@@ -38,7 +40,7 @@ class ApiService {
       'Accept': 'application/json',
     };
 
-    final res = await http.get(urlApi);
+    final res = await http.get(urlApi, headers: requestHeaders);
 
     if (res.statusCode == 200) {
       return recentFromJson(res.body.toString());
@@ -54,7 +56,7 @@ class ApiService {
       'Accept': 'application/json',
     };
 
-    final res = await http.get(urlApi);
+    final res = await http.get(urlApi, headers: requestHeaders);
 
     if (res.statusCode == 200) {
       return detailFromJson(res.body.toString());
@@ -64,16 +66,33 @@ class ApiService {
   }
 
   Future episode(slug) async {
+    // log("$slug");
     Uri urlApi = Uri.parse(base_url + episode_url + "/$slug");
+    log("$urlApi");
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
     };
 
-    final res = await http.get(urlApi);
+    final res = await http.get(urlApi, headers: requestHeaders);
 
     if (res.statusCode == 200) {
       return episodeFromJson(res.body.toString());
+    } else {
+      return false;
+    }
+  }
+
+  Future search(values) async {
+    log("$values");
+    Uri urlApi = Uri.parse("$base_url$values");
+    Map<String, String> requestHeaders = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+    final res = await http.get(urlApi, headers: requestHeaders);
+    if (res.statusCode == 200) {
+      return searchFromJson(res.body.toString());
     } else {
       return false;
     }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_anime_stream/common/colors.dart';
-import 'package:my_anime_stream/pages/episode/episode.dart';
+import 'package:my_anime_stream/pages/episode/webview_screen.dart';
 
 class ListEpisode extends StatefulWidget {
   final detail;
@@ -46,25 +46,32 @@ class _ListEpisodeState extends State<ListEpisode> {
           ],
         ),
         Column(
-          children:
-              data.episodes.map<Widget>((e) => episodeCard(e, size)).toList(),
+          children: data.episodes
+              .asMap()
+              .entries
+              .map<Widget>((e) => episodeCard(e.value, size, e.key, data.episodes))
+              .toList(),
         )
       ],
     );
     // list episode
   }
 
-  Widget episodeCard(data, size) {
+  Widget episodeCard(data, size, key, allEps) {
     return Padding(
       padding: const EdgeInsets.only(top: 15.0),
       child: InkWell(
         onTap: () {
-          Get.to(Episode(
-            slug: data.id,
-            url: data.url,
-            detail: widget.detail,
-            eps: data.number.toString(),
-          ));
+          Get.to(
+            WebViewScreen(
+              detail: widget.detail,
+              episode: data.number.toString(),
+              slug: data.id,
+              mediaUrl: data.url,
+              allEps: allEps,
+              currentIndex: key,
+            ),
+          );
         },
         child: Container(
           width: size.width,

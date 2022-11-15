@@ -24,6 +24,7 @@ class TakoPlayWebView extends StatefulWidget {
 
 class _TakoPlayWebViewState extends State<TakoPlayWebView> {
   WebViewController? _webViewController;
+  bool isLoading = true;
 
   @override
   Widget build(BuildContext context) => WebView(
@@ -37,6 +38,9 @@ class _TakoPlayWebViewState extends State<TakoPlayWebView> {
         onPageFinished: (_) async {
           if (_webViewController == null) return;
           widget.onLoadingFinished?.call(_webViewController!);
+          setState(() {
+            isLoading = false;
+          });
         },
         navigationDelegate: (NavigationRequest request) {
           // If we are navigating to the destination url, allow it.

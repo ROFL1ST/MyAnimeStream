@@ -33,7 +33,6 @@ class _AiringState extends State<Airing> {
               "Top Airing",
               style: kTitleTextStyle,
             ),
-            IconButton(onPressed: () {}, icon: Icon(Iconsax.arrow_circle_right))
           ],
         ),
         FutureBuilder(

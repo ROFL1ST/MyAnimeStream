@@ -32,7 +32,7 @@ class _RecentState extends State<Recent> {
               "Recent Updates",
               style: kTitleTextStyle,
             ),
-            IconButton(onPressed: () {}, icon: Icon(Iconsax.arrow_circle_right))
+           
           ],
         ),
         FutureBuilder(

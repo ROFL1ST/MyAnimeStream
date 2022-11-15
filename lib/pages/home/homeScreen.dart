@@ -2,6 +2,7 @@
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:my_anime_stream/API/apiService.dart';
 import 'package:my_anime_stream/common/colors.dart';
@@ -9,6 +10,7 @@ import 'package:my_anime_stream/pages/home/components/airing.dart';
 import 'package:my_anime_stream/pages/home/components/carousel.dart';
 import 'package:my_anime_stream/pages/home/components/favorite.dart';
 import 'package:my_anime_stream/pages/home/components/recent.dart';
+import 'package:my_anime_stream/pages/search/search.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -66,7 +68,9 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(Search());
+                },
                 icon: Icon(
                   Icons.search,
                   color: Colors.white,
@@ -94,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                     top: top,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20.0, left: 10),
+                    padding: const EdgeInsets.only(top: 40.0, left: 10),
                     child: Column(
                       children: [
                         Airing(
@@ -103,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                           refreshCarousel: refreshCarousel,
                         ),
                         SizedBox(
-                          height: size.height * 0.02,
+                          height: size.height * 0.03,
                         ),
                         Recent(
                           size: size,
@@ -111,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                           refreshRecent: refreshRecent,
                         ),
                         SizedBox(
-                          height: size.height * 0.02,
+                          height: size.height * 0.03,
                         ),
                         Favorite(size: size)
                       ],
