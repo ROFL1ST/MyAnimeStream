@@ -1,6 +1,6 @@
-# my_anime_stream
+# MyAnimeStream App
 
-A new Flutter project.
+App for streaming anime for free and no Ads
 
 ## Getting Started
 
