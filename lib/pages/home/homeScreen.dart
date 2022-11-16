@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       drawer: Drawer(
         child: Container(
-          color: kDarkBlue.withOpacity(0.5),
+          color: kDarkBlue.withOpacity(1),
           child: ListView(
             children: [
               SizedBox(

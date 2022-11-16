@@ -8,9 +8,7 @@ const kSubtitleColor = Color(0xFF777777);
 const kListSubtitleColor = Color(0xFF494949);
 const kFavIconColor = Color(0xFFF24E1E);
 Color kCloseIcon = Color(0xFF000000).withOpacity(0.7);
-const kDarkBlue = Color(0xFF142b51);
-const Color tkGradientBlue = Color(0xFF133F6E);
-const Color tkGradientBlack = Color(0xFF28313B);
+const kDarkBlue = Color(0xFF0D1321);
 // style
 
 const kTitleBannerStyle = TextStyle(

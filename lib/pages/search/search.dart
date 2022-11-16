@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, curly_braces_in_flow_control_structures
 
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -83,10 +85,17 @@ class _SearchState extends State<Search> {
             // contentPadding: EdgeInsets.all(20),
           ),
           onSubmitted: (val) {
-            _saveToRecentSearches(val);
-            _searchController.clear();
-            hasValue.value = true;
-            title.value = val;
+            if (val.length >= 4) {
+              _saveToRecentSearches(val);
+
+              hasValue.value = true;
+              title.value = val;
+            } else {
+              Get.snackbar("Minimal 4", 'Minimal Kata pencarian adalah 4!',
+                  backgroundColor: Colors.black38,
+                  duration: const Duration(milliseconds: 1300),
+                  snackPosition: SnackPosition.BOTTOM);
+            }
           },
         ),
         backgroundColor: Colors.transparent,
@@ -141,7 +150,7 @@ class _SearchState extends State<Search> {
                 future: _getRecentSearches(),
                 builder: (context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState != ConnectionState.done)
-                    return Center(child: Text("Loading..."));
+                    return Center(child: Text(""));
                   if (snapshot.hasError) return Text("");
                   if (snapshot.hasData)
                     return Padding(
