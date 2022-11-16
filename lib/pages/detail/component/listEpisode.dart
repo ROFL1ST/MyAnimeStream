@@ -49,7 +49,8 @@ class _ListEpisodeState extends State<ListEpisode> {
           children: data.episodes
               .asMap()
               .entries
-              .map<Widget>((e) => episodeCard(e.value, size, e.key, data.episodes))
+              .map<Widget>(
+                  (e) => episodeCard(e.value, size, e.key, data.episodes))
               .toList(),
         )
       ],
@@ -65,11 +66,10 @@ class _ListEpisodeState extends State<ListEpisode> {
           Get.to(
             WebViewScreen(
               detail: widget.detail,
-              episode: data.number.toString(),
               slug: data.id,
               mediaUrl: data.url,
-              allEps: allEps,
               currentIndex: key,
+              prevPage: "Detail",
             ),
           );
         },

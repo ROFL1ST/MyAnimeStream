@@ -9,7 +9,8 @@ import 'package:my_anime_stream/pages/home/components/cache_image_with_cachemana
 
 class ResultBuilder extends StatefulWidget {
   final data;
-  const ResultBuilder({super.key, required this.data});
+  final retry;
+  const ResultBuilder({super.key, required this.data, this.retry});
 
   @override
   State<ResultBuilder> createState() => _ResultBuilderState();
@@ -25,6 +26,8 @@ class _ResultBuilderState extends State<ResultBuilder> {
       child: GridView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
+        
+        physics: BouncingScrollPhysics(),
         itemCount: widget.data.length,
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
           childAspectRatio: .56,

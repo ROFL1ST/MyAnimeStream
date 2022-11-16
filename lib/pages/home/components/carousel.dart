@@ -1,10 +1,12 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, sort_child_properties_last
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_anime_stream/common/colors.dart';
+import 'package:my_anime_stream/helpers/cache_manager.dart';
 import 'package:my_anime_stream/pages/detail/detail.dart';
 
 class Carousel extends StatefulWidget {
@@ -68,7 +70,10 @@ class _CarouselState extends State<Carousel> {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
-                  image: NetworkImage(data[index].image),
+                  image: CachedNetworkImageProvider(
+                    data[index].image,
+                    cacheManager: CustomCacheManager.instance,
+                  ),
                   fit: BoxFit.cover,
                   alignment: Alignment.center,
                   opacity: 0.8)),

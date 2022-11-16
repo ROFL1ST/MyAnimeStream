@@ -59,6 +59,7 @@ class _AiringState extends State<Airing> {
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
           itemCount: data.length,
+          physics: BouncingScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 1,
               mainAxisExtent: size.height * 0.16,

@@ -23,7 +23,7 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   final TextEditingController _searchController = TextEditingController();
   late AnimationController controller;
-
+  late Future result;
   var title = ''.obs;
 
   var hasValue = false.obs;
@@ -36,7 +36,14 @@ class _SearchState extends State<Search> {
         title.value = _searchController.text;
 
         hasValue.value = true;
+        result = ApiService().search(title.value);
       }
+    });
+  }
+
+  void retryVoid() {
+    setState(() {
+      result = ApiService().search(title.value);
     });
   }
 
@@ -87,7 +94,7 @@ class _SearchState extends State<Search> {
       body: Obx(() {
         return hasValue.value
             ? FutureBuilder(
-                future: ApiService().search(title.value),
+                future: result,
                 builder: (context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState != ConnectionState.done)
                     return Padding(
@@ -119,7 +126,8 @@ class _SearchState extends State<Search> {
                   if (snapshot.hasData)
                     return Padding(
                       padding: const EdgeInsets.all(15.0),
-                      child: ResultBuilder(data: snapshot.data.results),
+                      child: ResultBuilder(
+                          data: snapshot.data.results, retry: retryVoid),
                     );
                   return Center(
                     child: Text(
@@ -133,8 +141,8 @@ class _SearchState extends State<Search> {
                 future: _getRecentSearches(),
                 builder: (context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState != ConnectionState.done)
-                    return Text("Loading");
-                  if (snapshot.hasError) return Text("Error");
+                    return Center(child: Text("Loading..."));
+                  if (snapshot.hasError) return Text("");
                   if (snapshot.hasData)
                     return Padding(
                       padding: const EdgeInsets.all(8.0),

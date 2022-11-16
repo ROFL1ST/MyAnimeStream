@@ -2,9 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:my_anime_stream/API/apiService.dart';
 import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/helpers/cache_manager.dart';
 import 'package:my_anime_stream/pages/detail/detail.dart';
+import 'package:my_anime_stream/pages/episode/webview_screen.dart';
 
 class Recent extends StatefulWidget {
   final size;
@@ -32,7 +34,6 @@ class _RecentState extends State<Recent> {
               "Recent Updates",
               style: kTitleTextStyle,
             ),
-           
           ],
         ),
         FutureBuilder(
@@ -59,6 +60,7 @@ class _RecentState extends State<Recent> {
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
           itemCount: data.length,
+          physics: BouncingScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 1,
               mainAxisExtent: size.height * 0.16,
@@ -73,9 +75,12 @@ class _RecentState extends State<Recent> {
     return InkWell(
       onTap: () {
         Get.to(
-          Detail(
-            images: data.image,
-            slug: data.id,
+          WebViewScreen(
+            slug: data.episodeId,
+            detail: ApiService().detail(data.id),
+            currentIndex: data.episodeNumber - 1,
+            mediaUrl: data.url,
+            prevPage: "Home",
           ),
         );
         // arah ke episode yg dituju

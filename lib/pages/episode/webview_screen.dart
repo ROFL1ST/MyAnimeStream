@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures, prefer_const_constructors
+
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
@@ -8,7 +10,9 @@ import 'package:flutter/services.dart';
 // import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 import 'package:my_anime_stream/API/apiService.dart';
+import 'package:my_anime_stream/API/model/favorite.dart';
 import 'package:my_anime_stream/common/colors.dart';
+import 'package:my_anime_stream/helpers/favoriteManager.dart';
 import 'package:my_anime_stream/pages/detail/component/isi.dart';
 import 'package:my_anime_stream/pages/detail/detail.dart';
 import 'package:my_anime_stream/pages/episode/component/title.dart';
@@ -22,17 +26,15 @@ class WebViewScreen extends StatefulWidget {
   final mediaUrl;
   final slug;
   final detail;
-  final episode;
-  final allEps;
   final currentIndex;
+  final prevPage;
   const WebViewScreen(
       {Key? key,
       this.mediaUrl,
       required this.slug,
       required this.detail,
-      required this.episode,
-      this.allEps,
-      this.currentIndex})
+      required this.currentIndex,
+      required this.prevPage})
       : super(key: key);
 
   @override
@@ -45,16 +47,16 @@ class _WebViewScreenState extends State<WebViewScreen> {
   late Future top;
   late Future url;
   late Future eps;
+
   int index = 0;
   ScrollController? _scrollController;
 
   @override
   void initState() {
     index = widget.currentIndex;
-    // detail = ApiService().detail(widget.slug);
     top = ApiService().top();
-    // url = ApiService().fetchIframeEmbedded(widget.mediaUrl);
     eps = ApiService().episode(widget.slug);
+
     super.initState();
     if (Platform.isAndroid) WebView.platform = AndroidWebView();
     if (Platform.isIOS) WebView.platform = CupertinoWebView();
@@ -67,19 +69,17 @@ class _WebViewScreenState extends State<WebViewScreen> {
     setState(() {
       index = index + 1;
     });
-    log("hai ${index}");
   }
 
   void prev() {
     setState(() {
       index = index - 1;
     });
-    log("hai ${index}");
   }
 
-  void updatePage() {
+  void updatePage(data) {
     // log("${widget.allEps[id].id}");
-    eps = ApiService().episode(widget.allEps[index].id);
+    eps = ApiService().episode(data[index].id);
   }
 
   @override
@@ -95,6 +95,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     // takoDebugPrint(Get.arguments['mediaUrl'].toString());
+    log("${widget.mediaUrl}");
     return WillPopScope(
       onWillPop: () async {
         if (!isLandScape.value) {
@@ -139,8 +140,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
                       return loadingPlayer(size);
                     if (snapshot.hasError) return Text("Error");
                     if (snapshot.hasData)
-                      return videoPlayer(
-                          snapshot.data.headers.referer, orientation);
+                      return (snapshot.data == "message")
+                          ? Center(
+                              child: Text("Down"),
+                            )
+                          : videoPlayer(
+                              snapshot.data.headers.referer, orientation);
                     return Text("Kosong");
                   },
                   future: eps,
@@ -170,110 +175,27 @@ class _WebViewScreenState extends State<WebViewScreen> {
                                   SizedBox(
                                     height: size.height * 0.023,
                                   ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      (index == 0)
-                                          ? Container(
-                                              decoration: BoxDecoration(
-                                                color: cardBg.withOpacity(0.1),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Row(
-                                                  children: [
-                                                    Icon(Icons.skip_previous),
-                                                    SizedBox(
-                                                      width: size.width * 0.02,
-                                                    ),
-                                                    Text("Previous")
-                                                  ],
-                                                ),
-                                              ),
-                                            )
-                                          : InkWell(
-                                              onTap: () {
-                                                prev();
-                                                updatePage();
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: cardBg,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.skip_previous),
-                                                      SizedBox(
-                                                        width:
-                                                            size.width * 0.02,
-                                                      ),
-                                                      Text("Previous")
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                      InkWell(
-                                        onTap: () {
-                                          Get.back();
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: cardBg,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              children: [
-                                                Icon(Icons.list),
-                                                SizedBox(
-                                                  width: size.width * 0.02,
-                                                ),
-                                                Text("Episode"),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          next();
-                                          updatePage();
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: cardBg,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                15.0, 8.0, 15.0, 8.0),
-                                            child: Row(
-                                              children: [
-                                                Text("Next"),
-                                                SizedBox(
-                                                  width: size.width * 0.02,
-                                                ),
-                                                Icon(Icons.skip_next),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                  FutureBuilder(
+                                      future: widget.detail,
+                                      builder:
+                                          (context, AsyncSnapshot snapshot) {
+                                        if (snapshot.connectionState !=
+                                            ConnectionState.done)
+                                          return loadNextPrev(size);
+                                        if (snapshot.hasError)
+                                          return Center(
+                                              child: Column(
+                                            // ignore: prefer_const_literals_to_create_immutables
+                                            children: [
+                                              Text("No Connection"),
+                                            ],
+                                          ));
+                                        if (snapshot.hasData) {
+                                          return nextPrev(size, snapshot.data);
+                                        } else {
+                                          return Text("");
+                                        }
+                                      }),
                                   SizedBox(
                                     height: size.height * 0.033,
                                   ),
@@ -306,6 +228,227 @@ class _WebViewScreenState extends State<WebViewScreen> {
           );
         }),
       ),
+    );
+  }
+
+  Widget loadNextPrev(size) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: cardBg.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.skip_previous,
+                  color: Colors.white.withOpacity(0.4),
+                ),
+                SizedBox(
+                  width: size.width * 0.02,
+                ),
+                Text(
+                  "Previous",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.4),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: cardBg,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.list,
+                  color: Colors.white.withOpacity(0.4),
+                ),
+                SizedBox(
+                  width: size.width * 0.02,
+                ),
+                Text(
+                  "Episode",
+                  style: TextStyle(color: Colors.white.withOpacity(0.4)),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: cardBg,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(15.0, 8.0, 15.0, 8.0),
+            child: Row(
+              children: [
+                Text(
+                  "Next",
+                  style: TextStyle(color: Colors.white.withOpacity(0.4)),
+                ),
+                SizedBox(
+                  width: size.width * 0.02,
+                ),
+                Icon(
+                  Icons.skip_next,
+                  color: Colors.white.withOpacity(
+                    0.4,
+                  ),
+                )
+              ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget nextPrev(size, data) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        (index == 0)
+            ? Container(
+                decoration: BoxDecoration(
+                  color: cardBg.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.skip_previous,
+                        color: Colors.white.withOpacity(0.4),
+                      ),
+                      SizedBox(
+                        width: size.width * 0.02,
+                      ),
+                      Text(
+                        "Previous",
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.4),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            : InkWell(
+                onTap: () {
+                  prev();
+                  updatePage(data.episodes);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: cardBg,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Icon(Icons.skip_previous),
+                        SizedBox(
+                          width: size.width * 0.02,
+                        ),
+                        Text("Previous")
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+        InkWell(
+          onTap: () {
+            if (widget.prevPage != "Home") {
+              Get.back();
+            } else {
+              Get.off(Detail(images: data.image, slug: data.id));
+            }
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Icon(Icons.list),
+                  SizedBox(
+                    width: size.width * 0.02,
+                  ),
+                  Text("Episode"),
+                ],
+              ),
+            ),
+          ),
+        ),
+        (index + 1 == data.episodes.length)
+            ? Container(
+                decoration: BoxDecoration(
+                  color: cardBg,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(15.0, 8.0, 15.0, 8.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Next",
+                        style: TextStyle(color: Colors.white.withOpacity(0.4)),
+                      ),
+                      SizedBox(
+                        width: size.width * 0.02,
+                      ),
+                      Icon(
+                        Icons.skip_next,
+                        color: Colors.white.withOpacity(
+                          0.4,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            : InkWell(
+                onTap: () {
+                  next();
+                  updatePage(data.episodes);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: cardBg,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(15.0, 8.0, 15.0, 8.0),
+                    child: Row(
+                      children: [
+                        Text("Next"),
+                        SizedBox(
+                          width: size.width * 0.02,
+                        ),
+                        Icon(Icons.skip_next),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+      ],
     );
   }
 
@@ -490,6 +633,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
   }
 
   Widget card(data, size) {
+    final FavoriteManager favoriteManager = Get.put(FavoriteManager());
+
     print(widget.slug != data.id);
     if (widget.slug != data.id) {
       return InkWell(
@@ -551,9 +696,38 @@ class _WebViewScreenState extends State<WebViewScreen> {
                   )
                 ],
               ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.favorite_outline),
+              GetBuilder<FavoriteManager>(
+                builder: (_) => IconButton(
+                  onPressed: () {
+                    final item = Favorite(
+                      id: data.id,
+                      title: data.title,
+                      url: data.url,
+                      image: data.image,
+                    );
+                    if (favoriteManager.ids
+                        .contains(data.id.toString())) {
+                      favoriteManager.removeFromFavorite(item);
+                      Get.snackbar(
+                        data.title,
+                        "Ahh,${data.title} Removed From Favorite 😨",
+                        backgroundColor: Colors.black38,
+                        duration: const Duration(milliseconds: 1300),
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    } else {
+                      favoriteManager.addToFavorite(item);
+                      Get.snackbar(data.title,
+                          'Yeay!!, ${data.title} Added to bookmark successfully! 😊',
+                          backgroundColor: Colors.black38,
+                          duration: const Duration(milliseconds: 1300),
+                          snackPosition: SnackPosition.BOTTOM);
+                    }
+                  },
+                  icon: Icon(favoriteManager.ids.contains(data.id)
+                      ? Icons.favorite
+                      : Icons.favorite_outline),
+                ),
               )
             ],
           ),

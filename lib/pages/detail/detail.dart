@@ -12,6 +12,7 @@ import 'package:my_anime_stream/helpers/cache_manager.dart';
 import 'package:my_anime_stream/pages/detail/component/isi.dart';
 import 'package:my_anime_stream/pages/detail/component/listEpisode.dart';
 import 'package:my_anime_stream/pages/detail/component/title.dart';
+import 'package:my_anime_stream/pages/episode/webview_screen.dart';
 
 class Detail extends StatefulWidget {
   final images;
@@ -57,6 +58,61 @@ class _DetailState extends State<Detail> {
                         bottomRight: Radius.circular(30),
                       ),
                     ),
+                  ),
+                  FutureBuilder(
+                    builder: (context, AsyncSnapshot snapshot) {
+                      if (snapshot.connectionState != ConnectionState.done)
+                        return Text("");
+                      if (snapshot.hasError) return Text("");
+                      if (snapshot.hasData) {
+                        return Positioned(
+                          right: 0,
+                          bottom: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: Container(
+                              width: size.width * 0.4,
+                              decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.4),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(100),
+                                      bottomLeft: Radius.circular(100))),
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.play_arrow),
+                                    onPressed: () {
+                                      Get.to(WebViewScreen(
+                                        slug: snapshot
+                                            .data
+                                            .episodes[
+                                                snapshot.data.episodes.length -
+                                                    1]
+                                            .id,
+                                        detail: detail,
+                                        currentIndex:
+                                            snapshot.data.episodes.length - 1,
+                                        prevPage: "Detail",
+                                        mediaUrl: snapshot
+                                            .data
+                                            .episodes[
+                                                snapshot.data.episodes.length -
+                                                    1]
+                                            .url,
+                                      ));
+                                    },
+                                  ),
+                                  Text("Watch Latest")
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Text("");
+                      }
+                    },
+                    future: detail,
                   ),
                   SafeArea(
                     child: Padding(
