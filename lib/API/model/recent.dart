@@ -16,7 +16,7 @@ class Recent {
        required this.results,
     });
 
-    int currentPage;
+    String currentPage;
     bool hasNextPage;
     List<Result> results;
 

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,8 @@ import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/helpers/cache_manager.dart';
 import 'package:my_anime_stream/pages/detail/detail.dart';
 import 'package:my_anime_stream/pages/episode/webview_screen.dart';
+import 'package:my_anime_stream/pages/home/components/cache_image_with_cachemanager.dart';
+import 'package:my_anime_stream/pages/recent/recentPages.dart';
 
 class Recent extends StatefulWidget {
   final size;
@@ -34,6 +37,12 @@ class _RecentState extends State<Recent> {
               "Recent Updates",
               style: kTitleTextStyle,
             ),
+            IconButton(
+              onPressed: () {
+                Get.to(RecentPages(), arguments: widget.recent);
+              },
+              icon: Icon(Iconsax.arrow_circle_right),
+            )
           ],
         ),
         FutureBuilder(
@@ -73,60 +82,49 @@ class _RecentState extends State<Recent> {
 
   Widget card(data, size) {
     return InkWell(
-      onTap: () {
-        Get.to(
-          WebViewScreen(
-            slug: data.episodeId,
-            detail: ApiService().detail(data.id),
-            currentIndex: data.episodeNumber - 1,
-            mediaUrl: data.url,
-            prevPage: "Home",
-          ),
-        );
-        // arah ke episode yg dituju
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          image: DecorationImage(
-            image: CachedNetworkImageProvider(
-              data.image,
-              cacheManager: CustomCacheManager.instance,
+        onTap: () {
+          Get.to(
+            WebViewScreen(
+              slug: data.episodeId,
+              detail: ApiService().detail(data.id),
+              currentIndex: data.episodeNumber - 1,
+              prevPage: "Home",
             ),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0, bottom: 6),
-              child: Container(
-                height: size.height * 0.03,
-                width: data.episodeNumber.toString().length * 20,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Color(0xFF535353).withOpacity(0.62),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
+          );
+          // arah ke episode yg dituju
+        },
+        child: Container(
+          child: Column(
+            children: [
+              Expanded(
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Text(
-                      data.episodeNumber.toString(),
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: NetworkImageWithCacheManager(
+                        imageUrl: data.image,
+                      ),
                     ),
                   ],
                 ),
               ),
-            )
-          ],
-        ),
-      ),
-    );
+              Container(
+                decoration: BoxDecoration(
+                    color: cardBg,
+                    borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(10),
+                        bottomLeft: Radius.circular(10))),
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Center(
+                    child: Text("Episode ${data.episodeNumber.toString()}", style: kTitleTextStyle.copyWith(fontSize: 14),),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ));
   }
 
   Widget listLoading(size) {
@@ -135,16 +133,17 @@ class _RecentState extends State<Recent> {
       height: size.height * 0.27,
       width: size.width,
       child: GridView.builder(
-          scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
-          itemCount: 10,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              mainAxisExtent: size.height * 0.16,
-              mainAxisSpacing: 30),
-          itemBuilder: (context, index) {
-            return cardLoading(size);
-          }),
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        itemCount: 10,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 1,
+            mainAxisExtent: size.height * 0.16,
+            mainAxisSpacing: 30),
+        itemBuilder: (context, index) {
+          return cardLoading(size);
+        },
+      ),
     );
   }
 

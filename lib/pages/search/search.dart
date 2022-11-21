@@ -38,14 +38,14 @@ class _SearchState extends State<Search> {
         title.value = _searchController.text;
 
         hasValue.value = true;
-        result = ApiService().search(title.value);
+        result = ApiService().search(title.value, 1);
       }
     });
   }
 
   void retryVoid() {
     setState(() {
-      result = ApiService().search(title.value);
+      result = ApiService().search(title.value, 1);
     });
   }
 
@@ -85,17 +85,11 @@ class _SearchState extends State<Search> {
             // contentPadding: EdgeInsets.all(20),
           ),
           onSubmitted: (val) {
-            if (val.length >= 4) {
-              _saveToRecentSearches(val);
+            _saveToRecentSearches(val);
+            result = ApiService().search(title.value, 1);
 
-              hasValue.value = true;
-              title.value = val;
-            } else {
-              Get.snackbar("Minimal 4", 'Minimal Kata pencarian adalah 4!',
-                  backgroundColor: Colors.black38,
-                  duration: const Duration(milliseconds: 1300),
-                  snackPosition: SnackPosition.BOTTOM);
-            }
+            hasValue.value = true;
+            title.value = val;
           },
         ),
         backgroundColor: Colors.transparent,
@@ -110,17 +104,18 @@ class _SearchState extends State<Search> {
                       padding: const EdgeInsets.all(15.0),
                       child: Loading(),
                     );
-                  if (snapshot.hasError)
+                  if (snapshot.hasError) {
                     return Center(
                       child: Column(
                         children: [
                           Text(
                             "No Connetion",
-                            style: kSubtitleTextStyle,
+                            style: kSubtitleTextStyle.copyWith(
+                                color: Colors.white),
                           ),
                           TextButton(
                             onPressed: () {
-                              ApiService().search(title.value);
+                              ApiService().search(title.value, 1);
                             },
                             child: Text("Retry"),
                             style: TextButton.styleFrom(
@@ -132,18 +127,31 @@ class _SearchState extends State<Search> {
                         ],
                       ),
                     );
-                  if (snapshot.hasData)
-                    return Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: ResultBuilder(
-                          data: snapshot.data.results, retry: retryVoid),
+                  }
+
+                  if (snapshot.hasData) {
+                    log("${snapshot.data.results}");
+                    return (snapshot.data.results.length != 0)
+                        ? Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: ResultBuilder(
+                                data: snapshot.data.results, retry: retryVoid),
+                          )
+                        : Center(
+                          child: Text(
+                            "No Results Found !",
+                            style: kSubtitleTextStyle.copyWith(
+                                color: Colors.grey),
+                          ),
+                        );
+                  } else {
+                    return Center(
+                      child: Text(
+                        "No Results Found !",
+                        style: kSubtitleTextStyle.copyWith(color: Colors.white),
+                      ),
                     );
-                  return Center(
-                    child: Text(
-                      "No Results Found !",
-                      style: kSubtitleTextStyle,
-                    ),
-                  );
+                  }
                 },
               )
             : FutureBuilder<List<String>>(
@@ -181,6 +189,8 @@ class _SearchState extends State<Search> {
                                 setState(() {
                                   title.value = snapshot.data[index];
                                   _searchController.text = title.value;
+                                  result = ApiService().search(title.value, 1);
+
                                   hasValue.value = true;
                                 });
                               },

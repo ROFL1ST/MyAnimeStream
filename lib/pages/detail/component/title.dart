@@ -47,7 +47,7 @@ class _TopState extends State<Top> {
             ],
           );
         if (snapshot.hasError) return Text("");
-        if (snapshot.hasData) log("${favoriteManager.ids}");
+        if (snapshot.hasData)
         return Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -58,9 +58,9 @@ class _TopState extends State<Top> {
                 decoration: BoxDecoration(
                     color: cardBg, borderRadius: BorderRadius.circular(25)),
                 child: IconButton(
-                  icon: Icon(favoriteManager.ids.contains(snapshot.data.id)
-                      ? Icons.favorite
-                      : Icons.favorite_outline),
+                  icon: favoriteManager.ids.contains(snapshot.data.id)
+                      ? Icon(Icons.favorite, color: kFavIconColor,)
+                      : Icon(Icons.favorite_outline),
                   onPressed: () {
                     final item = Favorite(
                       id: snapshot.data.id,

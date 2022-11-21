@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -21,6 +23,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
         brightness: Brightness.dark,
         fontFamily: "Popin",
         backgroundColor: bg,

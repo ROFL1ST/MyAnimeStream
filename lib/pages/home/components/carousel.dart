@@ -32,9 +32,12 @@ class _CarouselState extends State<Carousel> {
           return loadingCarousel(widget.size);
         if (snapshot.hasError)
           return errorCarousel(widget.size, widget.refreshCarousel);
-        if (snapshot.hasData)
+        if (snapshot.hasData) {
+          snapshot.data.results.shuffle();
           return listBuilder(snapshot.data.results, widget.size);
-        return Text("Kosong");
+        } else {
+          return Text("Kosong");
+        }
       },
       future: widget.top,
     );
@@ -50,14 +53,15 @@ class _CarouselState extends State<Carousel> {
           height: size.height * 0.2,
           autoPlay: true,
           initialPage: 0,
-          enlargeCenterPage: true,
-          viewportFraction: 0.85),
+          // enlargeCenterPage: true,
+          viewportFraction: 0.92),
     );
   }
 
   Widget cardCarousel(data, index, size) {
     // print(data[0].image);
-    return Center(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: InkWell(
         onTap: () {
           Get.to(Detail(

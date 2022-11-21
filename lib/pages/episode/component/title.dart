@@ -1,4 +1,4 @@
-// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: curly_braces_in_flow_control_structures, prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -59,9 +59,12 @@ class _TopState extends State<Top> {
                   decoration: BoxDecoration(
                       color: cardBg, borderRadius: BorderRadius.circular(25)),
                   child: IconButton(
-                    icon: Icon(favoriteManager.ids.contains(snapshot.data.id)
-                        ? Icons.favorite
-                        : Icons.favorite_outline),
+                    icon: favoriteManager.ids.contains(snapshot.data.id)
+                        ? Icon(
+                            Icons.favorite,
+                            color: kFavIconColor,
+                          )
+                        : Icon(Icons.favorite_outline),
                     onPressed: () {
                       final item = Favorite(
                         id: snapshot.data.id,

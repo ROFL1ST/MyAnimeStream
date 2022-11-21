@@ -1,5 +1,7 @@
 // ignore_for_file: sized_box_for_whitespace, prefer_const_constructors
 
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -43,6 +45,7 @@ class _ResultBuilderState extends State<ResultBuilder> {
   }
 
   Widget card(data, size) {
+    
     return InkWell(
         onTap: () {
           Get.to(Detail(images: data.image, slug: data.id));

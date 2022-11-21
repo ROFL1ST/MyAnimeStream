@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 import 'dart:developer';
 import 'package:html/dom.dart' as dom;
@@ -33,8 +35,8 @@ class ApiService {
     }
   }
 
-  Future recent() async {
-    Uri urlApi = Uri.parse(base_url + recent_episodes);
+  Future recent(page) async {
+    Uri urlApi = Uri.parse(base_url + recent_episodes + "?page=$page");
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
@@ -83,9 +85,9 @@ class ApiService {
     }
   }
 
-  Future search(values) async {
+  Future search(values, page) async {
     log("$values");
-    Uri urlApi = Uri.parse("$base_url$values");
+    Uri urlApi = Uri.parse("$base_url$values?page=$page");
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
       'Accept': 'application/json',

@@ -46,15 +46,22 @@ class _FavoritePagesState extends State<FavoritePages> {
           builder: (context, AsyncSnapshot snapshot) =>
               GetBuilder<FavoriteManager>(
             builder: (_) => Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: favoriteManager.favorites.length,
-                itemBuilder: (context, index) {
-                  return card(favoriteManager.favorites[index], size, index);
-                },
-              ),
-            ),
+                padding: const EdgeInsets.all(10.0),
+                child: favoriteManager.favorites.length != 0
+                    ? ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: favoriteManager.favorites.length,
+                        itemBuilder: (context, index) {
+                          return card(
+                              favoriteManager.favorites[index], size, index);
+                        },
+                      )
+                    : const Center(
+                        child: Text(
+                          "No Favorite Yet",
+                          style: kSubtitleDetailStyle,
+                        ),
+                      )),
           ),
         ),
       ),
@@ -63,7 +70,6 @@ class _FavoritePagesState extends State<FavoritePages> {
 
   Widget card(data, size, index) {
     return Slidable(
-      
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         // ignore: sort_child_properties_last
@@ -191,7 +197,10 @@ class _FavoritePagesState extends State<FavoritePages> {
                       duration: const Duration(milliseconds: 1300),
                       snackPosition: SnackPosition.BOTTOM);
                 },
-                icon: Icon(Icons.favorite),
+                icon: Icon(
+                  Icons.favorite,
+                  color: kFavIconColor,
+                ),
               )
             ],
           ),

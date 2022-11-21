@@ -15,6 +15,7 @@ import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/helpers/favoriteManager.dart';
 import 'package:my_anime_stream/pages/detail/component/isi.dart';
 import 'package:my_anime_stream/pages/detail/detail.dart';
+import 'package:my_anime_stream/pages/episode/component/player.dart';
 import 'package:my_anime_stream/pages/episode/component/title.dart';
 
 import '../../helpers/tako_helper.dart';
@@ -95,7 +96,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     // takoDebugPrint(Get.arguments['mediaUrl'].toString());
-    log("${widget.mediaUrl}");
+    // log("${widget.mediaUrl}");
     return WillPopScope(
       onWillPop: () async {
         if (!isLandScape.value) {
@@ -150,6 +151,19 @@ class _WebViewScreenState extends State<WebViewScreen> {
                   },
                   future: eps,
                 ),
+                // FutureBuilder(
+                //     future: eps,
+                //     builder: (context, AsyncSnapshot snapshot) {
+                //       if (snapshot.connectionState != ConnectionState.done)
+                //         return loadingPlayer(size);
+                //       if (snapshot.hasError) return Text("Error");
+                //       if (snapshot.hasData) {
+                //         log("${snapshot.data.sources[4].quality}");
+                //         return Player(url: snapshot.data.sources[4].url, orientation: orientation,);
+                //       } else {
+                //         return Text("");
+                //       }
+                //     }),
                 orientation != Orientation.landscape
                     ? Container(
                         height: Get.height * 0.62,
@@ -551,11 +565,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
     // var top = data.where((e) => e.results);
     return Column(
         children: data.results.map<Widget>((e) {
-      if (e.id != widget.slug) {
-        return card(e, size);
-      } else {
-        return null;
-      }
+      return card(e, size);
     }).toList());
   }
 
@@ -705,8 +715,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                       url: data.url,
                       image: data.image,
                     );
-                    if (favoriteManager.ids
-                        .contains(data.id.toString())) {
+                    if (favoriteManager.ids.contains(data.id.toString())) {
                       favoriteManager.removeFromFavorite(item);
                       Get.snackbar(
                         data.title,

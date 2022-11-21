@@ -7,6 +7,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:my_anime_stream/API/apiService.dart';
 import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/pages/favorite/favoritePages.dart';
+import 'package:my_anime_stream/pages/history/historyPages.dart';
 import 'package:my_anime_stream/pages/home/components/airing.dart';
 import 'package:my_anime_stream/pages/home/components/carousel.dart';
 import 'package:my_anime_stream/pages/home/components/favorite.dart';
@@ -32,21 +33,21 @@ class _HomePageState extends State<HomePage> {
 
   void refreshRecent() {
     setState(() {
-      recent = ApiService().recent();
+      recent = ApiService().recent(1);
     });
   }
 
   void refreshAll() {
     setState(() {
       top = ApiService().top();
-      recent = ApiService().recent();
+      recent = ApiService().recent(1);
     });
   }
 
   @override
   void initState() {
     top = ApiService().top();
-    recent = ApiService().recent();
+    recent = ApiService().recent(1);
     super.initState();
   }
 
@@ -94,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                                 topLeft: Radius.circular(10),
                                 topRight: Radius.circular(10))),
                         child: Text(
-                          'MyAnimeStream',
+                          'MyNime',
                           style: kTitleBannerStyle,
                         ),
                       ),
@@ -112,6 +113,7 @@ class _HomePageState extends State<HomePage> {
                 leading: const Icon(Icons.favorite),
               ),
               ListTile(
+                onTap: () => Get.to(HistoryPages(detail: null,)),
                 hoverColor: Colors.white,
                 title: const Text('History'),
                 leading: const Icon(Icons.history),
@@ -132,7 +134,7 @@ class _HomePageState extends State<HomePage> {
         title: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Text(
-            "MyAnimeStream",
+            "MyNime",
             style: kTitleTextStyle,
           ),
         ),
@@ -156,7 +158,7 @@ class _HomePageState extends State<HomePage> {
         },
         child: SafeArea(
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            
             child: Padding(
               padding: const EdgeInsets.only(top: 10.0),
               child: Column(

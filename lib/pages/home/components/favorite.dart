@@ -29,7 +29,7 @@ class _FavoriteState extends State<Favorite> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               "Favorites",
               style: kTitleTextStyle,
             ),
@@ -42,10 +42,12 @@ class _FavoriteState extends State<Favorite> {
           ],
         ),
         FutureBuilder<void>(
-            future: favoriteManager.loadFavoriteFromDatabase(),
-            builder: (context, AsyncSnapshot snapshot) =>
-                GetBuilder<FavoriteManager>(
-                    builder: (_) => listBuilder(widget.size)))
+          future: favoriteManager.loadFavoriteFromDatabase(),
+          builder: (context, AsyncSnapshot snapshot) =>
+              GetBuilder<FavoriteManager>(
+            builder: (_) => listBuilder(widget.size),
+          ),
+        ),
       ],
     );
   }
@@ -56,17 +58,28 @@ class _FavoriteState extends State<Favorite> {
       // height: favoriteManager.favorites.length * 110,
       width: size.width,
       child: Column(
-          children: favoriteManager.favorites
-              .asMap()
-              .entries
-              .map((e) => card(e.value, size, e.key))
-              .toList()),
+          children: favoriteManager.favorites.length != 0
+              ? favoriteManager.favorites
+                  .asMap()
+                  .entries
+                  .map((e) => card(e.value, size, e.key))
+                  .toList()
+              : [
+                  const Padding(
+                    padding: EdgeInsets.all(80.0),
+                    child: Center(
+                      child: Text(
+                        "No Favorite Yet",
+                        style: kSubtitleDetailStyle,
+                      ),
+                    ),
+                  )
+                ]),
     );
   }
 
   Widget card(data, size, index) {
     return Slidable(
-      
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         // ignore: sort_child_properties_last
@@ -194,7 +207,10 @@ class _FavoriteState extends State<Favorite> {
                       duration: const Duration(milliseconds: 1300),
                       snackPosition: SnackPosition.BOTTOM);
                 },
-                icon: Icon(Icons.favorite),
+                icon: Icon(
+                  Icons.favorite,
+                  color: kFavIconColor,
+                ),
               )
             ],
           ),
