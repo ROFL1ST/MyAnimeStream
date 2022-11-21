@@ -48,50 +48,54 @@ class _TopState extends State<Top> {
           );
         if (snapshot.hasError) return Text("");
         if (snapshot.hasData)
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            title(snapshot.data, widget.size),
-            GetBuilder<FavoriteManager>(
-              builder: (_) => Container(
-                decoration: BoxDecoration(
-                    color: cardBg, borderRadius: BorderRadius.circular(25)),
-                child: IconButton(
-                  icon: favoriteManager.ids.contains(snapshot.data.id)
-                      ? Icon(Icons.favorite, color: kFavIconColor,)
-                      : Icon(Icons.favorite_outline),
-                  onPressed: () {
-                    final item = Favorite(
-                      id: snapshot.data.id,
-                      title: snapshot.data.title,
-                      url: snapshot.data.url,
-                      image: snapshot.data.image,
-                    );
-                    if (favoriteManager.ids
-                        .contains(snapshot.data.id.toString())) {
-                      favoriteManager.removeFromFavorite(item);
-                      Get.snackbar(
-                        snapshot.data.title,
-                        "Ahh,${snapshot.data.title} Removed From Favorite 😨",
-                        backgroundColor: Colors.black38,
-                        duration: const Duration(milliseconds: 1300),
-                        snackPosition: SnackPosition.BOTTOM,
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              title(snapshot.data, widget.size),
+              GetBuilder<FavoriteManager>(
+                builder: (_) => Container(
+                  decoration: BoxDecoration(
+                      color: cardBg, borderRadius: BorderRadius.circular(25)),
+                  child: IconButton(
+                    icon: favoriteManager.ids.contains(snapshot.data.id)
+                        ? Icon(
+                            Icons.favorite,
+                            color: kFavIconColor,
+                          )
+                        : Icon(Icons.favorite_outline),
+                    onPressed: () {
+                      final item = Favorite(
+                        id: snapshot.data.id,
+                        title: snapshot.data.title,
+                        url: snapshot.data.url,
+                        image: snapshot.data.image,
+                        genre: snapshot.data.genres.join(", "),
                       );
-                    } else {
-                      favoriteManager.addToFavorite(item);
-                      Get.snackbar(snapshot.data.title,
-                          'Yeay!!, ${snapshot.data.title} Added to bookmark successfully! 😊',
+                      if (favoriteManager.ids
+                          .contains(snapshot.data.id.toString())) {
+                        favoriteManager.removeFromFavorite(item);
+                        Get.snackbar(
+                          snapshot.data.title,
+                          "Ahh,${snapshot.data.title} Removed From Favorite 😨",
                           backgroundColor: Colors.black38,
                           duration: const Duration(milliseconds: 1300),
-                          snackPosition: SnackPosition.BOTTOM);
-                    }
-                  },
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
+                      } else {
+                        favoriteManager.addToFavorite(item);
+                        Get.snackbar(snapshot.data.title,
+                            'Yeay!!, ${snapshot.data.title} Added to bookmark successfully! 😊',
+                            backgroundColor: Colors.black38,
+                            duration: const Duration(milliseconds: 1300),
+                            snackPosition: SnackPosition.BOTTOM);
+                      }
+                    },
+                  ),
                 ),
-              ),
-            )
-          ],
-        );
+              )
+            ],
+          );
         return Text("Kosong");
       },
       future: widget.detail,

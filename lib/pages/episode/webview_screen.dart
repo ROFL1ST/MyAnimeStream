@@ -714,6 +714,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                       title: data.title,
                       url: data.url,
                       image: data.image,
+                       genre: data.genres.join(", "),
                     );
                     if (favoriteManager.ids.contains(data.id.toString())) {
                       favoriteManager.removeFromFavorite(item);

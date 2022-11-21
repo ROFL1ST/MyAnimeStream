@@ -71,6 +71,7 @@ class _TopState extends State<Top> {
                         title: snapshot.data.title,
                         url: snapshot.data.url,
                         image: snapshot.data.image,
+                         genre: snapshot.data.genres.join(", "),
                       );
                       if (favoriteManager.ids
                           .contains(snapshot.data.id.toString())) {

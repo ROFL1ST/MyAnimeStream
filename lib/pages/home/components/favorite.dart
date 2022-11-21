@@ -163,35 +163,16 @@ class _FavoriteState extends State<Favorite> {
                         SizedBox(
                           height: size.height * 0.01,
                         ),
-                        FutureBuilder(
-                            future: ApiService().detail(data.id),
-                            builder: (context, AsyncSnapshot snapshot) {
-                              if (snapshot.connectionState !=
-                                  ConnectionState.done)
-                                return Container(
-                                  width: size.width * 0.55,
-                                  decoration: BoxDecoration(
-                                    color: cardBg,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(6),
-                                  ),
-                                );
-                              if (snapshot.hasError) Text("");
-                              if (snapshot.hasData)
-                                return SizedBox(
-                                  width: size.width * 0.55,
-                                  child: AutoSizeText(
-                                    snapshot.data.genres.join(", "),
-                                    maxLines: 1,
-                                    style: kListSubtitle,
-                                    minFontSize: 14,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                );
-                              return Text("");
-                            })
+                        SizedBox(
+                          width: size.width * 0.55,
+                          child: AutoSizeText(
+                            data.genre,
+                            maxLines: 1,
+                            style: kListSubtitle,
+                            minFontSize: 14,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )
                       ],
                     ),
                   )

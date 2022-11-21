@@ -16,6 +16,7 @@ class FavoriteDatabase {
   final String titleCol = "title";
   final String imageCol = "image";
   final String urlCol = "url";
+  final String genreCol = "genre";
 
   final dbName = "fav.db";
   final idType = 'TEXT NOT NULL';
@@ -38,7 +39,7 @@ class FavoriteDatabase {
   Future _createDatabase(Database db, version) async {
     await db.execute('''
     CREATE TABLE $tableFavorite(
-      $idCol $idType, $titleCol $textType, $imageCol $textType, $urlCol $textType)''');
+      $idCol $idType, $titleCol $textType, $imageCol $textType, $urlCol $textType, $genreCol $textType)''');
   }
 
   Future<void> insert(Favorite favorite) async {
