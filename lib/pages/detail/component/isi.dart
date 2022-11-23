@@ -56,9 +56,9 @@ class _IsiState extends State<Isi> {
                   key: UniqueKey(),
                   cacheManager: CustomCacheManager.instance,
                   imageUrl: data.image,
-                  // height: size.height * 0.1,
+                  height: size.height * 0.1,
                   width: size.width * 0.2,
-                  fit: BoxFit.fill,
+                  fit: BoxFit.cover,
                 ),
               ),
               SizedBox(

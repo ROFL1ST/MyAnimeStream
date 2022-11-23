@@ -56,7 +56,7 @@ class _DetailState extends State<Detail> {
               height: size.height * 0.5,
             ),
             Container(
-              height: size.height * 0.5,
+              height: size.height * 0.501,
               decoration: BoxDecoration(
                 color: Colors.white,
                 gradient: LinearGradient(
@@ -64,7 +64,7 @@ class _DetailState extends State<Detail> {
                   end: FractionalOffset.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    Colors.black,
+                    bg,
                   ],
                   stops: [0.0, 1.0],
                 ),

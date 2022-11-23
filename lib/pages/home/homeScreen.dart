@@ -10,6 +10,7 @@ import 'package:my_anime_stream/pages/favorite/favoritePages.dart';
 import 'package:my_anime_stream/pages/history/historyPages.dart';
 import 'package:my_anime_stream/pages/home/components/airing.dart';
 import 'package:my_anime_stream/pages/home/components/carousel.dart';
+import 'package:my_anime_stream/pages/home/components/continue.dart';
 import 'package:my_anime_stream/pages/home/components/favorite.dart';
 import 'package:my_anime_stream/pages/home/components/recent.dart';
 import 'package:my_anime_stream/pages/search/search.dart';
@@ -113,7 +114,9 @@ class _HomePageState extends State<HomePage> {
                 leading: const Icon(Icons.favorite),
               ),
               ListTile(
-                onTap: () => Get.to(HistoryPages(detail: null,)),
+                onTap: () => Get.to(HistoryPages(
+                  detail: null,
+                )),
                 hoverColor: Colors.white,
                 title: const Text('History'),
                 leading: const Icon(Icons.history),
@@ -129,8 +132,8 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: bg,
       appBar: AppBar(
-        backgroundColor: bg,
-        elevation: 0,
+        backgroundColor: Colors.transparent,
+        // elevation: 0,
         title: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Text(
@@ -158,7 +161,6 @@ class _HomePageState extends State<HomePage> {
         },
         child: SafeArea(
           child: SingleChildScrollView(
-            
             child: Padding(
               padding: const EdgeInsets.only(top: 10.0),
               child: Column(
@@ -175,6 +177,10 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.only(top: 40.0, left: 10),
                     child: Column(
                       children: [
+                        // Continue(),
+                        // SizedBox(
+                        //   height: size.height * 0.03,
+                        // ),
                         Airing(
                           size: size,
                           top: top,

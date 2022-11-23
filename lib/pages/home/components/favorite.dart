@@ -97,7 +97,7 @@ class _FavoriteState extends State<Favorite> {
             label: 'Delete',
             icon: Icons.delete,
             foregroundColor: Colors.redAccent,
-            backgroundColor: bg,
+            backgroundColor: cardBg,
           ),
         ],
 
@@ -123,6 +123,7 @@ class _FavoriteState extends State<Favorite> {
           );
         },
         child: Container(
+        
           width: size.width,
           height: size.height * 0.12,
           child: Row(

@@ -87,7 +87,8 @@ class _FavoritePagesState extends State<FavoritePages> {
             label: 'Delete',
             icon: Icons.delete,
             foregroundColor: Colors.redAccent,
-            backgroundColor: bg,
+                     backgroundColor: cardBg,
+
           ),
         ],
 

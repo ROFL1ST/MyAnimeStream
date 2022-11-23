@@ -52,7 +52,8 @@ dependencies:
   flutter_slidable: ^2.0.0
   animations: ^2.0.7
   video_viewer: ^1.2.7
-
+  floating: ^1.1.1+1
+  timeago: ^3.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

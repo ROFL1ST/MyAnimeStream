@@ -105,41 +105,44 @@ class _CarouselState extends State<Carousel> {
     return CarouselSlider.builder(
       itemCount: 3,
       itemBuilder: (BuildContext context, index, realIndex) {
-        return Center(
-          child: Container(
-            height: size.height,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: cardBg,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(13.0),
-                  child: Container(
-                    height: size.height * 0.02,
-                    width: size.width * 0.2,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: cardBg,
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal:4.0),
+          child: Center(
+            child: Container(
+              height: size.height,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: cardBg,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(13.0),
+                    child: Container(
+                      height: size.height * 0.02,
+                      width: size.width * 0.2,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: cardBg,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
+              width: size.width,
             ),
-            width: size.width,
           ),
         );
       },
       options: CarouselOptions(
           height: size.height * 0.2,
-          // autoPlay: true,
+
           initialPage: 0,
-          enlargeCenterPage: true,
-          viewportFraction: 0.85),
+          // enlargeCenterPage: true,
+          viewportFraction: 0.92),
     );
   }
 

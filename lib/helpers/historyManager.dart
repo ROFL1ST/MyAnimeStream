@@ -5,36 +5,53 @@ import '../API/model/recent_anime.dart';
 
 class HistoryManager extends GetxController {
   List<RecentAnime> _recentAnimes = [];
+  List<String> _epsIdList = [];
   List<RecentAnime> get animeList => [..._recentAnimes.reversed];
+  List<String> get epsIdList => [..._epsIdList];
 
   Future<void> loadHistoryFromDatabase() async {
     final result = await HistoryDatabase.instance.getAllHistoryAnime();
     if (result != null) {
       _recentAnimes = result;
-    }
-  }
-
-  void addHistoryAnime(RecentAnime anime) {
-    for (var rm in _recentAnimes) {
-      if (rm.id == anime.id) {
-        HistoryDatabase.instance.remove(anime.id);
+      for (var history in _recentAnimes) {
+        _epsIdList.add(history.episodeId);
       }
     }
-    _recentAnimes.removeWhere((element) => (element.id == anime.id));
-    _recentAnimes.add(anime);
-    HistoryDatabase.instance.add(anime);
-    update();
   }
 
-  void removeHistory(String id) {
-    _recentAnimes.removeWhere((element) => element.id == id);
-    HistoryDatabase.instance.remove(id);
-    update();
+  void addHistoryAnime(RecentAnime anime) async {
+    for (var rm in _recentAnimes) {
+      if (rm.episodeId == anime.episodeId) {
+        HistoryDatabase.instance.remove(anime.episodeId);
+      }
+    }
+    _recentAnimes
+        .removeWhere((element) => (element.episodeId == anime.episodeId));
+    _epsIdList.removeWhere((element) => (element == anime.episodeId));
+    _recentAnimes.add(anime);
+    _epsIdList.add(anime.episodeId);
+
+    await HistoryDatabase.instance.add(anime);
+    return update();
+  }
+
+  void removeHistory(String episodeId) {
+    _recentAnimes.removeWhere((element) => element.episodeId == episodeId);
+    _epsIdList.removeWhere((element) => (element == episodeId));
+
+    HistoryDatabase.instance.remove(episodeId);
+    return update();
   }
 
   void removeAllHistory() {
     _recentAnimes.clear();
     HistoryDatabase.instance.removeAll();
-    update();
+    return update();
+  }
+
+  void closeDb() {
+    _recentAnimes.clear();
+    HistoryDatabase.instance.close();
+    return update();
   }
 }

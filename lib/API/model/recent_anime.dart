@@ -3,39 +3,45 @@ class RecentAnime {
     // id Detail
     required this.id,
     // id Episode
-    required this.epsId,
+    
+    required this.episodeId,
     required this.currentEp,
     required this.epUrl,
     required this.title,
     required this.image,
+    required this.createAt,
     // required this.animeUrl,
   });
 
   final String id;
-  final String epsId;
+ 
+  final String episodeId;
+
   final String title;
   final String epUrl;
   final String currentEp;
   final String image;
-  // String animeUrl;
+  final String createAt;
 
   factory RecentAnime.fromJson(Map<String, dynamic> json) => RecentAnime(
         id: json['id'],
-        epsId: json['epsId'],
+     
+        episodeId: json['episodeId'],
         title: json['title'],
         epUrl: json['epUrl'],
         currentEp: json['currentEp'],
         image: json['image'],
-        // animeUrl: json['animeUrl'],
+        createAt: json['createAt'],
       );
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'epsId': epsId,
+       
+        'episodeId': episodeId,
         'title': title,
         'epUrl': epUrl,
         'currentEp': currentEp,
         'image': image,
-        // 'animeUrl': animeUrl,
+        'createAt': createAt,
       };
 }

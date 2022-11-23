@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-Color bg = Color(0xFF000000);
+Color bg = Color(0xFF181920);
 Color cardBg = Color(0xFFD9D9D9).withOpacity(0.1);
 const kSubtitleColor = Color(0xFF777777);
 const kListSubtitleColor = Color(0xFF494949);

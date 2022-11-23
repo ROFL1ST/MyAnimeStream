@@ -33,6 +33,7 @@ class _ListEpisodeState extends State<ListEpisode> {
   @override
   void initState() {
     // TODO: implement initState
+    historyManager.loadHistoryFromDatabase();
     super.initState();
   }
 
@@ -156,48 +157,69 @@ class _ListEpisodeState extends State<ListEpisode> {
                             // return episodeCard(epChunkList[index], size, index,
                             //     snapshot.data.episodes, snapshot.data);
 
-                            return InkWell(
-                              onTap: () async {
-                                final history = RecentAnime(
-                                    id: epChunkList[index].id,
-                                    epsId: epChunkList[index].id,
-                                    currentEp:
-                                        (int.parse(epChunkList[index].number) -
-                                                1)
-                                            .toString(),
-                                    epUrl: epChunkList[index].url,
-                                    title: snapshot.data.title,
-                                    image: snapshot.data.image);
-                                // log("${history.currentEp}");
-                                historyManager.addHistoryAnime(history);
+                            return GetBuilder<HistoryManager>(
+                                builder: (_) => InkWell(
+                                      onTap: () async {
+                                        DateTime now = DateTime.now();
 
-                                await Get.to(
-                                  WebViewScreen(
-                                    detail: widget.detail,
-                                    slug: epChunkList[index].id,
-                                    mediaUrl: epChunkList[index].url,
-                                    currentIndex:
-                                        int.parse(epChunkList[index].number) -
-                                            1,
-                                    prevPage: "Detail",
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                width: size.width,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: cardBg,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    epChunkList[index].number.toString(),
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                            );
+                                        final history = RecentAnime(
+                                          id: snapshot.data.id,
+                                          episodeId: epChunkList[index].id,
+                                          currentEp: (int.parse(
+                                                      epChunkList[index]
+                                                          .number) -
+                                                  1)
+                                              .toString(),
+                                          epUrl: epChunkList[index].url,
+                                          title: snapshot.data.title,
+                                          image: snapshot.data.image,
+                                          createAt: now.toString(),
+                                        );
+                                        // log("${history.currentEp}");
+                                        if (historyManager.epsIdList
+                                            .contains(epChunkList[index].id)) {
+                                          historyManager.removeHistory(
+                                              epChunkList[index].id);
+                                          historyManager
+                                              .addHistoryAnime(history);
+                                        } else {
+                                          historyManager
+                                              .addHistoryAnime(history);
+                                        }
+                                        await Get.to(
+                                          WebViewScreen(
+                                            detail: widget.detail,
+                                            slug: epChunkList[index].id,
+                                            mediaUrl: epChunkList[index].url,
+                                            currentIndex:
+                                                int.parse(epChunkList[index].number) -
+                                                    1,
+                                            prevPage: "Detail",
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        width: size.width,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: historyManager.epsIdList
+                                                  .contains(
+                                                      epChunkList[index].id)
+                                              ? cardBg.withOpacity(0.5)
+                                              : cardBg,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            epChunkList[index]
+                                                .number
+                                                .toString(),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                    ));
                           },
                         ),
                       ))

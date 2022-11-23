@@ -5,17 +5,21 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:floating/floating.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 import 'package:my_anime_stream/API/apiService.dart';
 import 'package:my_anime_stream/API/model/favorite.dart';
+import 'package:my_anime_stream/API/model/recent_anime.dart';
 import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/helpers/favoriteManager.dart';
+import 'package:my_anime_stream/helpers/historyManager.dart';
 import 'package:my_anime_stream/pages/detail/component/isi.dart';
 import 'package:my_anime_stream/pages/detail/detail.dart';
 import 'package:my_anime_stream/pages/episode/component/player.dart';
+
 import 'package:my_anime_stream/pages/episode/component/title.dart';
 
 import '../../helpers/tako_helper.dart';
@@ -48,19 +52,22 @@ class _WebViewScreenState extends State<WebViewScreen> {
   late Future top;
   late Future url;
   late Future eps;
+  final HistoryManager historyManager = Get.put(HistoryManager());
 
   int index = 0;
   ScrollController? _scrollController;
+  final floating = Floating();
 
   @override
   void initState() {
     index = widget.currentIndex;
     top = ApiService().top();
     eps = ApiService().episode(widget.slug);
-
     super.initState();
     if (Platform.isAndroid) WebView.platform = AndroidWebView();
     if (Platform.isIOS) WebView.platform = CupertinoWebView();
+    historyManager.loadHistoryFromDatabase();
+
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
@@ -89,10 +96,22 @@ class _WebViewScreenState extends State<WebViewScreen> {
       DeviceOrientation.portraitUp,
     ]);
     _scrollController?.dispose();
+    floating.dispose();
     super.dispose();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState lifecycleState) {
+    if (lifecycleState == AppLifecycleState.inactive) {
+      floating.enable(Rational.square());
+    }
+  }
+
+  Future<void> enablePip() async {
+    final status = await floating.enable(Rational.landscape());
+    debugPrint('PiP enabled? $status');
+  }
+
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     // takoDebugPrint(Get.arguments['mediaUrl'].toString());
@@ -115,7 +134,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: bg,
         body: OrientationBuilder(builder: (context, orientation) {
           if (orientation == Orientation.landscape) {
             isLandScape.value = true;
@@ -236,7 +255,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                           ],
                         ),
                       )
-                    : SizedBox()
+                    : SizedBox(),
               ],
             ),
           );
@@ -330,140 +349,188 @@ class _WebViewScreenState extends State<WebViewScreen> {
   }
 
   Widget nextPrev(size, data) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        (index == 0)
-            ? Container(
-                decoration: BoxDecoration(
-                  color: cardBg.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.skip_previous,
-                        color: Colors.white.withOpacity(0.4),
-                      ),
-                      SizedBox(
-                        width: size.width * 0.02,
-                      ),
-                      Text(
-                        "Previous",
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.4),
+    return GetBuilder<HistoryManager>(
+        builder: (_) => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                (index == 0)
+                    ? Container(
+                        decoration: BoxDecoration(
+                          color: cardBg.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.skip_previous,
+                                color: Colors.white.withOpacity(0.4),
+                              ),
+                              SizedBox(
+                                width: size.width * 0.02,
+                              ),
+                              Text(
+                                "Previous",
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.4),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       )
-                    ],
-                  ),
-                ),
-              )
-            : InkWell(
-                onTap: () {
-                  prev();
-                  updatePage(data.episodes);
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: cardBg,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Icon(Icons.skip_previous),
-                        SizedBox(
-                          width: size.width * 0.02,
+                    : InkWell(
+                        onTap: () {
+                          prev();
+                          updatePage(data.episodes);
+
+                          DateTime now = DateTime.now();
+
+                          final history = RecentAnime(
+                            id: data.id,
+                            episodeId: data.episodes[index].id,
+                            currentEp:
+                                (int.parse(data.episodes[index].number) - 1)
+                                    .toString(),
+                            epUrl: data.episodes[index].url,
+                            title: data.title,
+                            image: data.image,
+                            createAt: now.toString(),
+                          );
+                          if (historyManager.epsIdList
+                              .contains(data.episodes[index].id)) {
+                            historyManager
+                                .removeHistory(data.episodes[index].id);
+                            historyManager.addHistoryAnime(history);
+                          } else {
+                            historyManager.addHistoryAnime(history);
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: cardBg,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Icon(Icons.skip_previous),
+                                SizedBox(
+                                  width: size.width * 0.02,
+                                ),
+                                Text("Previous")
+                              ],
+                            ),
+                          ),
                         ),
-                        Text("Previous")
-                      ],
+                      ),
+                InkWell(
+                  onTap: () {
+                    if (widget.prevPage != "Home") {
+                      Get.back();
+                    } else {
+                      Get.off(Detail(images: data.image, slug: data.id));
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: cardBg,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Icon(Icons.list),
+                          SizedBox(
+                            width: size.width * 0.02,
+                          ),
+                          Text("Episode"),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-        InkWell(
-          onTap: () {
-            if (widget.prevPage != "Home") {
-              Get.back();
-            } else {
-              Get.off(Detail(images: data.image, slug: data.id));
-            }
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: cardBg,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Icon(Icons.list),
-                  SizedBox(
-                    width: size.width * 0.02,
-                  ),
-                  Text("Episode"),
-                ],
-              ),
-            ),
-          ),
-        ),
-        (index + 1 == data.episodes.length)
-            ? Container(
-                decoration: BoxDecoration(
-                  color: cardBg,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(15.0, 8.0, 15.0, 8.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        "Next",
-                        style: TextStyle(color: Colors.white.withOpacity(0.4)),
-                      ),
-                      SizedBox(
-                        width: size.width * 0.02,
-                      ),
-                      Icon(
-                        Icons.skip_next,
-                        color: Colors.white.withOpacity(
-                          0.4,
+                (index + 1 == data.episodes.length)
+                    ? Container(
+                        decoration: BoxDecoration(
+                          color: cardBg,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(15.0, 8.0, 15.0, 8.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Next",
+                                style: TextStyle(
+                                    color: Colors.white.withOpacity(0.4)),
+                              ),
+                              SizedBox(
+                                width: size.width * 0.02,
+                              ),
+                              Icon(
+                                Icons.skip_next,
+                                color: Colors.white.withOpacity(
+                                  0.4,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       )
-                    ],
-                  ),
-                ),
-              )
-            : InkWell(
-                onTap: () {
-                  next();
-                  updatePage(data.episodes);
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: cardBg,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(15.0, 8.0, 15.0, 8.0),
-                    child: Row(
-                      children: [
-                        Text("Next"),
-                        SizedBox(
-                          width: size.width * 0.02,
+                    : InkWell(
+                        onTap: () {
+                          next();
+                          updatePage(data.episodes);
+
+                          DateTime now = DateTime.now();
+
+                          final history = RecentAnime(
+                            id: data.id,
+                            episodeId: data.episodes[index].id,
+                            currentEp:
+                                (int.parse(data.episodes[index].number) - 1)
+                                    .toString(),
+                            epUrl: data.episodes[index].url,
+                            title: data.title,
+                            image: data.image,
+                            createAt: now.toString(),
+                          );
+                          if (historyManager.epsIdList
+                              .contains(data.episodes[index].id)) {
+                            historyManager
+                                .removeHistory(data.episodes[index].id);
+                            historyManager.addHistoryAnime(history);
+                          } else {
+                            historyManager.addHistoryAnime(history);
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: cardBg,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.fromLTRB(15.0, 8.0, 15.0, 8.0),
+                            child: Row(
+                              children: [
+                                Text("Next"),
+                                SizedBox(
+                                  width: size.width * 0.02,
+                                ),
+                                Icon(Icons.skip_next),
+                              ],
+                            ),
+                          ),
                         ),
-                        Icon(Icons.skip_next),
-                      ],
-                    ),
-                  ),
-                ),
-              )
-      ],
-    );
+                      )
+              ],
+            ));
   }
 
   Widget videoPlayer(data, orientation) {
@@ -546,7 +613,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -714,7 +781,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                       title: data.title,
                       url: data.url,
                       image: data.image,
-                       genre: data.genres.join(", "),
+                      genre: data.genres.join(", "),
                     );
                     if (favoriteManager.ids.contains(data.id.toString())) {
                       favoriteManager.removeFromFavorite(item);

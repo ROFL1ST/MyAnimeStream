@@ -27,6 +27,8 @@ class _SearchState extends State<Search> {
   late AnimationController controller;
   late Future result;
   var title = ''.obs;
+  int _pageIndex = 1;
+  bool hasNoMoreResult = false;
 
   var hasValue = false.obs;
 
@@ -36,16 +38,16 @@ class _SearchState extends State<Search> {
     _searchController.addListener(() {
       if (_searchController.text.length >= 4) {
         title.value = _searchController.text;
-
+        _pageIndex = 1;
         hasValue.value = true;
-        result = ApiService().search(title.value, 1);
+        result = ApiService().search(title.value, _pageIndex);
       }
     });
   }
 
   void retryVoid() {
     setState(() {
-      result = ApiService().search(title.value, 1);
+      result = ApiService().search(title.value, _pageIndex);
     });
   }
 
@@ -62,42 +64,55 @@ class _SearchState extends State<Search> {
             Get.back();
           },
         ),
-        title: TextField(
-          controller: _searchController,
-          decoration: InputDecoration(
-            fillColor: cardBg,
-            prefixIcon: const Icon(
-              Icons.search,
-              color: Colors.white,
-            ),
-            suffixIcon: IconButton(
-              icon: const Icon(
-                Icons.clear,
+        title: Container(
+          // margin: EdgeInsets.symmetric(vertical: 5),
+          padding: EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 1,
+          ),
+          width: size.width * 0.7,
+          // height: size.height * 0.05,
+          decoration: BoxDecoration(
+            color: cardBg,
+            borderRadius: BorderRadius.circular(29),
+          ),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              fillColor: cardBg,
+              prefixIcon: const Icon(
+                Icons.search,
                 color: Colors.white,
               ),
-              onPressed: () {
-                _searchController.clear();
-                hasValue.value = false;
-              },
+              suffixIcon: IconButton(
+                icon: const Icon(
+                  Icons.clear,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  _searchController.clear();
+                  hasValue.value = false;
+                },
+              ),
+              hintText: 'Search...',
+              border: InputBorder.none,
+              // contentPadding: EdgeInsets.all(20),
             ),
-            hintText: 'Search...',
-            border: InputBorder.none,
-            // contentPadding: EdgeInsets.all(20),
+            onSubmitted: (val) {
+              _saveToRecentSearches(val);
+              result = ApiService().search(title.value, _pageIndex);
+              _pageIndex = 1;
+              hasValue.value = true;
+              title.value = val;
+            },
           ),
-          onSubmitted: (val) {
-            _saveToRecentSearches(val);
-            result = ApiService().search(title.value, 1);
-
-            hasValue.value = true;
-            title.value = val;
-          },
         ),
         backgroundColor: Colors.transparent,
       ),
       body: Obx(() {
         return hasValue.value
             ? FutureBuilder(
-                future: result,
+                future: ApiService().search(title.value, _pageIndex),
                 builder: (context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState != ConnectionState.done)
                     return Padding(
@@ -105,45 +120,343 @@ class _SearchState extends State<Search> {
                       child: Loading(),
                     );
                   if (snapshot.hasError) {
-                    return Center(
-                      child: Column(
-                        children: [
-                          Text(
-                            "No Connetion",
-                            style: kSubtitleTextStyle.copyWith(
-                                color: Colors.white),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              ApiService().search(title.value, 1);
-                            },
-                            child: Text("Retry"),
-                            style: TextButton.styleFrom(
-                              backgroundColor: kFavIconColor,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
+                    return SizedBox(
+                      height: size.height,
+                      child: Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "No Connetion",
+                              style: kSubtitleTextStyle.copyWith(
+                                  color: Colors.white),
                             ),
-                          )
-                        ],
+                            TextButton(
+                              onPressed: () {
+                                ApiService().search(title.value, _pageIndex);
+                              },
+                              child: Text(
+                                "Retry",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              style: TextButton.styleFrom(
+                                backgroundColor: kFavIconColor,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     );
                   }
 
                   if (snapshot.hasData) {
-                    log("${snapshot.data.results}");
+                    log("${snapshot.data.hasNextPage}");
+                    (snapshot.data.hasNextPage)
+                        ? _pageIndex
+                        : (_pageIndex == 1)
+                            ? _pageIndex = 1
+                            : _pageIndex;
                     return (snapshot.data.results.length != 0)
                         ? Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: ResultBuilder(
-                                data: snapshot.data.results, retry: retryVoid),
+                            padding: const EdgeInsets.only(
+                                top: 15.0, right: 15, left: 15),
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: ResultBuilder(
+                                      data: snapshot.data.results,
+                                      retry: retryVoid),
+                                ),
+                                (snapshot.data.hasNextPage)
+                                    ? Align(
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 25, vertical: 10),
+                                          decoration: BoxDecoration(
+                                            color: cardBg,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            // ignore: prefer_const_literals_to_create_immutables
+                                            children: [
+                                              Material(
+                                                color: Colors.transparent,
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(20),
+                                                  bottomLeft:
+                                                      Radius.circular(20),
+                                                ),
+                                                child: InkWell(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(20),
+                                                    bottomLeft:
+                                                        Radius.circular(20),
+                                                  ),
+                                                  onTap: () {
+                                                    if (_pageIndex != 1 &&
+                                                        _pageIndex > 1) {
+                                                      _pageIndex--;
+
+                                                      setState(() {});
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10,
+                                                            vertical: 9),
+                                                    decoration: BoxDecoration(
+                                                        // color: tkLightGreen,
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(20),
+                                                      bottomLeft:
+                                                          Radius.circular(20),
+                                                    )),
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons
+                                                              .arrow_back_ios_new_rounded,
+                                                          color: _pageIndex == 1
+                                                              ? Colors.white
+                                                                  .withOpacity(
+                                                                      0.4)
+                                                              : Colors.white,
+                                                        ),
+                                                        Text(
+                                                          'Prev',
+                                                          style: TextStyle(
+                                                            color: _pageIndex ==
+                                                                    1
+                                                                ? Colors.white
+                                                                    .withOpacity(
+                                                                        0.4)
+                                                                : Colors.white,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: EdgeInsets.all(18),
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.white,
+                                                ),
+                                                child: Text(
+                                                    _pageIndex.toString(),
+                                                    style: kTitleTextStyle
+                                                        .copyWith(
+                                                            color:
+                                                                Colors.black)),
+                                              ),
+                                              Material(
+                                                color: Colors.transparent,
+                                                borderRadius: BorderRadius.only(
+                                                  topRight: Radius.circular(20),
+                                                  bottomRight:
+                                                      Radius.circular(20),
+                                                ),
+                                                child: InkWell(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(20),
+                                                    bottomRight:
+                                                        Radius.circular(20),
+                                                  ),
+                                                  onTap: () {
+                                                    if (!hasNoMoreResult) {
+                                                      _pageIndex++;
+
+                                                      setState(() {});
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10,
+                                                            vertical: 9),
+                                                    decoration: BoxDecoration(
+                                                        // color: tkLightGreen,
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                      topRight:
+                                                          Radius.circular(20),
+                                                      bottomRight:
+                                                          Radius.circular(20),
+                                                    )),
+                                                    child: Row(
+                                                      children: const [
+                                                        Text('Next'),
+                                                        Icon(
+                                                          Icons
+                                                              .arrow_forward_ios_rounded,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    : (_pageIndex == 1)
+                                        ? SizedBox()
+                                        : Align(
+                                            child: Container(
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal: 25, vertical: 10),
+                                              decoration: BoxDecoration(
+                                                color: cardBg,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                // ignore: prefer_const_literals_to_create_immutables
+                                                children: [
+                                                  Material(
+                                                    color: Colors.transparent,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(20),
+                                                      bottomLeft:
+                                                          Radius.circular(20),
+                                                    ),
+                                                    child: InkWell(
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        topLeft:
+                                                            Radius.circular(20),
+                                                        bottomLeft:
+                                                            Radius.circular(20),
+                                                      ),
+                                                      onTap: () {
+                                                        if (_pageIndex != 1 &&
+                                                            _pageIndex > 1) {
+                                                          _pageIndex--;
+
+                                                          setState(() {});
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 9),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                // color: tkLightGreen,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  20),
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  20),
+                                                        )),
+                                                        child: Row(
+                                                          children: const [
+                                                            Icon(
+                                                              Icons
+                                                                  .arrow_back_ios_new_rounded,
+                                                            ),
+                                                            Text('Prev'),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    padding: EdgeInsets.all(18),
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Colors.white,
+                                                    ),
+                                                    child: Text(
+                                                        _pageIndex.toString(),
+                                                        style: kTitleTextStyle
+                                                            .copyWith(
+                                                                color: Colors
+                                                                    .black)),
+                                                  ),
+                                                  Material(
+                                                    color: Colors.transparent,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      topRight:
+                                                          Radius.circular(20),
+                                                      bottomRight:
+                                                          Radius.circular(20),
+                                                    ),
+                                                    child: Container(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 10,
+                                                              vertical: 9),
+                                                      decoration: BoxDecoration(
+                                                          // color: tkLightGreen,
+                                                          borderRadius:
+                                                              BorderRadius.only(
+                                                        topRight:
+                                                            Radius.circular(20),
+                                                        bottomRight:
+                                                            Radius.circular(20),
+                                                      )),
+                                                      child: Row(
+                                                        children: [
+                                                          Text(
+                                                            'Next',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white
+                                                                    .withOpacity(
+                                                                        0.4)),
+                                                          ),
+                                                          Icon(
+                                                              Icons
+                                                                  .arrow_forward_ios_rounded,
+                                                              color: Colors
+                                                                  .white
+                                                                  .withOpacity(
+                                                                      0.4)),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                              ],
+                            ),
                           )
                         : Center(
-                          child: Text(
-                            "No Results Found !",
-                            style: kSubtitleTextStyle.copyWith(
-                                color: Colors.grey),
-                          ),
-                        );
+                            child: Text(
+                              "No Results Found !",
+                              style: kSubtitleTextStyle.copyWith(
+                                  color: Colors.grey),
+                            ),
+                          );
                   } else {
                     return Center(
                       child: Text(
@@ -189,7 +502,10 @@ class _SearchState extends State<Search> {
                                 setState(() {
                                   title.value = snapshot.data[index];
                                   _searchController.text = title.value;
-                                  result = ApiService().search(title.value, 1);
+                                  _pageIndex = 1;
+
+                                  result = ApiService()
+                                      .search(title.value, _pageIndex);
 
                                   hasValue.value = true;
                                 });
@@ -203,7 +519,8 @@ class _SearchState extends State<Search> {
                       style: kSubtitleTextStyle,
                     ),
                   );
-                });
+                },
+              );
       }),
     );
   }

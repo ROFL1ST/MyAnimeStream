@@ -1,13 +1,17 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:my_anime_stream/API/apiService.dart';
+import 'package:my_anime_stream/API/model/recent_anime.dart';
 import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/helpers/historyManager.dart';
 import 'package:my_anime_stream/pages/episode/webview_screen.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class HistoryPages extends StatefulWidget {
   final detail;
@@ -19,6 +23,14 @@ class HistoryPages extends StatefulWidget {
 
 class _HistoryPagesState extends State<HistoryPages> {
   final HistoryManager historyManager = Get.put(HistoryManager());
+
+  @override
+  void initState() {
+    historyManager.loadHistoryFromDatabase();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -61,13 +73,13 @@ class _HistoryPagesState extends State<HistoryPages> {
                             label: 'Delete',
                             icon: Icons.delete,
                             foregroundColor: Colors.redAccent,
-                            backgroundColor: bg,
+                            backgroundColor: cardBg,
                           ),
                         ],
                         dismissible: DismissiblePane(
                           onDismissed: () {
                             historyManager.removeHistory(
-                              historyManager.animeList[index].id,
+                              historyManager.animeList[index].episodeId,
                             );
                           },
                         ),
@@ -120,16 +132,28 @@ class _HistoryPagesState extends State<HistoryPages> {
                       ),
                     ),
                     SizedBox(
-                      height: size.height * 0.01,
+                      height: size.height * 0.005,
                     ),
                     SizedBox(
                       width: size.width * 0.55,
-                      child: AutoSizeText(
-                        "Episode ${(int.parse(data.currentEp) + 1).toString()}",
-                        maxLines: 1,
-                        style: kListSubtitle,
-                        minFontSize: 14,
-                        overflow: TextOverflow.ellipsis,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AutoSizeText(
+                            "Episode ${(int.parse(data.currentEp) + 1).toString()}",
+                            maxLines: 1,
+                            style: kListSubtitle,
+                            minFontSize: 16,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          AutoSizeText(
+                            "${timeago.format(DateTime.parse(data.createAt))}",
+                            maxLines: 1,
+                            style: kListSubtitle,
+                            minFontSize: 14,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -138,15 +162,33 @@ class _HistoryPagesState extends State<HistoryPages> {
             ],
           ),
           IconButton(
-            onPressed: () {
-              Get.to(
-          WebViewScreen(
-            slug: data.epsId,
-            detail: ApiService().detail(data.id),
-            currentIndex: int.parse(data.currentEp),
-            prevPage: "Home",
-          ),
-        );
+            onPressed: () async {
+              DateTime now = DateTime.now();
+
+              final history = RecentAnime(
+                id: data.id,
+                episodeId: data.episodeId,
+                currentEp: data.currentEp,
+                epUrl: data.epUrl,
+                title: data.title,
+                image: data.image,
+                createAt: now.toString(),
+              );
+              if (historyManager.epsIdList.contains(data.episodeId)) {
+                historyManager.removeHistory(data.episodeId);
+                historyManager.addHistoryAnime(history);
+              } else {
+                historyManager.addHistoryAnime(history);
+              }
+
+              await Get.to(
+                WebViewScreen(
+                  slug: data.episodeId,
+                  detail: ApiService().detail(data.id),
+                  currentIndex: int.parse(data.currentEp),
+                  prevPage: "Home",
+                ),
+              );
             },
             icon: Icon(Icons.play_arrow),
           )

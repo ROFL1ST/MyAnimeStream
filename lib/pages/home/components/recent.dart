@@ -1,11 +1,15 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:my_anime_stream/API/apiService.dart';
+import 'package:my_anime_stream/API/model/recent_anime.dart';
 import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/helpers/cache_manager.dart';
+import 'package:my_anime_stream/helpers/historyManager.dart';
 import 'package:my_anime_stream/pages/detail/detail.dart';
 import 'package:my_anime_stream/pages/episode/webview_screen.dart';
 import 'package:my_anime_stream/pages/home/components/cache_image_with_cachemanager.dart';
@@ -26,6 +30,16 @@ class Recent extends StatefulWidget {
 }
 
 class _RecentState extends State<Recent> {
+  final HistoryManager historyManager = Get.put(HistoryManager());
+
+  @override
+  void initState() {
+    historyManager.loadHistoryFromDatabase();
+
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -81,9 +95,28 @@ class _RecentState extends State<Recent> {
   }
 
   Widget card(data, size) {
-    return InkWell(
-        onTap: () {
-          Get.to(
+    return GetBuilder<HistoryManager>(
+      builder: (_) => InkWell(
+        onTap: () async {
+          DateTime now = DateTime.now();
+
+          final history = RecentAnime(
+            id: data.id,
+            episodeId: data.episodeId,
+            currentEp: (data.episodeNumber - 1).toString(),
+            epUrl: data.url,
+            title: data.title,
+            image: data.image,
+            createAt: now.toString(),
+          );
+          if (historyManager.epsIdList.contains(data.episodeId)) {
+            historyManager.removeHistory(data.episodeId);
+            historyManager.addHistoryAnime(history);
+          } else {
+            historyManager.addHistoryAnime(history);
+          }
+          // log("${history.createAt}");
+          await Get.to(
             WebViewScreen(
               slug: data.episodeId,
               detail: ApiService().detail(data.id),
@@ -94,37 +127,54 @@ class _RecentState extends State<Recent> {
           // arah ke episode yg dituju
         },
         child: Container(
-          child: Column(
-            children: [
-              Expanded(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: NetworkImageWithCacheManager(
-                        imageUrl: data.image,
+          height: size.height * 0.04,
+          decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: size.height * 0.214,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: NetworkImageWithCacheManager(
+                                imageUrl: data.image,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    color: cardBg,
-                    borderRadius: BorderRadius.only(
-                        bottomRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Center(
-                    child: Text("Episode ${data.episodeNumber.toString()}", style: kTitleTextStyle.copyWith(fontSize: 14),),
+                    ],
                   ),
                 ),
-              )
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: Container(
+                    width: size.width,
+                    child: Center(
+                      child: AutoSizeText(
+                        "Episode ${data.episodeNumber.toString()}",
+                        minFontSize: 5,
+                        maxLines: 1,
+                        style: kTitleTextStyle.copyWith(fontSize: 14),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget listLoading(size) {

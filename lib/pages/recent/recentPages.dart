@@ -232,29 +232,36 @@ class _RecentPagesState extends State<RecentPages> {
           // arah ke episode yg dituju
         },
         child: Container(
-          child: Column(
-            children: [
-              Expanded(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: NetworkImageWithCacheManager(
-                        imageUrl: data.image,
+          height: size.height * 0.04,
+          decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: Column(
+              children: [
+                Container(
+                  height: size.height * 0.31,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: NetworkImageWithCacheManager(
+                                imageUrl: data.image,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    color: cardBg,
-                    borderRadius: BorderRadius.only(
-                        bottomRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))),
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
                   child: Center(
                     child: Text(
                       "Episode ${data.episodeNumber.toString()}",
@@ -262,8 +269,8 @@ class _RecentPagesState extends State<RecentPages> {
                     ),
                   ),
                 ),
-              )
-            ],
+              ],
+            ),
           ),
         ));
   }

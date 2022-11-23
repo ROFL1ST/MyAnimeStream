@@ -12,11 +12,13 @@ class HistoryDatabase {
 
   final String tableHistory = "History";
   final String idCol = "id";
-  final String epsIdCol = "epsId";
+  final String episodeIdCol = "episodeId";
+
   final String titleCol = "title";
   final String epUrlCol = "epUrl";
   final String currentEpCol = "currentEp";
   final String imageCol = "image";
+  final String createAtCol = "createAt";
 
   final String type = 'TEXT NOT NULL';
 
@@ -35,7 +37,7 @@ class HistoryDatabase {
   Future _createDatabase(Database db, version) async {
     await db.execute('''
     CREATE TABLE $tableHistory (
-      $idCol $type,$epsIdCol $type, $titleCol $type, $epUrlCol $type, $currentEpCol $type, $imageCol $type)
+      $idCol $type,$episodeIdCol $type, $titleCol $type, $epUrlCol $type, $currentEpCol $type, $imageCol $type, $createAtCol $type)
     ''');
   }
 
@@ -57,12 +59,12 @@ class HistoryDatabase {
     }
   }
 
-  Future<int> remove(String id) async {
+  Future<int> remove(String episodeId) async {
     final db = await instance.database;
     return await db.delete(
       tableHistory,
-      where: '$idCol == ?',
-      whereArgs: [id],
+      where: '$episodeIdCol == ?',
+      whereArgs: [episodeId],
     );
   }
 
@@ -70,6 +72,16 @@ class HistoryDatabase {
     final db = await instance.database;
     return await db.delete(
       tableHistory,
+    );
+  }
+
+  Future<void> update(RecentAnime anime, id) async {
+    final db = await instance.database;
+    await db.update(
+      tableHistory,
+      anime.toJson(),
+      where: '$idCol == ?',
+      whereArgs: [id],
     );
   }
 
