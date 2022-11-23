@@ -63,7 +63,7 @@ class FavoriteDatabase {
       tableFavorite,
       where: '$idCol == ?',
       whereArgs: [id],
-    );
+    );  
   }
 
   Future close() async {

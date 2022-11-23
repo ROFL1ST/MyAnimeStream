@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:my_anime_stream/API/apiService.dart';
 import 'package:my_anime_stream/API/model/recent_anime.dart';
 import 'package:my_anime_stream/common/colors.dart';
+import 'package:my_anime_stream/helpers/continueManager.dart';
 import 'package:my_anime_stream/helpers/historyManager.dart';
 import 'package:my_anime_stream/pages/episode/webview_screen.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -23,10 +24,13 @@ class HistoryPages extends StatefulWidget {
 
 class _HistoryPagesState extends State<HistoryPages> {
   final HistoryManager historyManager = Get.put(HistoryManager());
+  final ContinueManager continueManager = Get.put(ContinueManager());
 
   @override
   void initState() {
     historyManager.loadHistoryFromDatabase();
+    continueManager.loadContinueFromDatabase();
+
     // TODO: implement initState
     super.initState();
   }
@@ -63,12 +67,14 @@ class _HistoryPagesState extends State<HistoryPages> {
                   return Slidable(
                       endActionPane: ActionPane(
                         motion: ScrollMotion(),
+                        // ignore: sort_child_properties_last
                         children: [
                           SlidableAction(
                             onPressed: (BuildContext context) {
                               historyManager.removeHistory(
                                 historyManager.animeList[index].id,
                               );
+                             
                             },
                             label: 'Delete',
                             icon: Icons.delete,
@@ -81,6 +87,7 @@ class _HistoryPagesState extends State<HistoryPages> {
                             historyManager.removeHistory(
                               historyManager.animeList[index].episodeId,
                             );
+                            
                           },
                         ),
                       ),

@@ -139,9 +139,7 @@ class _ListEpisodeState extends State<ListEpisode> {
                   : SizedBox(),
               snapshot.data.episodes.isNotEmpty
                   ? Obx(() => SizedBox(
-                        height: snapshot.data.episodes.length > 50
-                            ? size.height * 0.7
-                            : size.height * 0.2,
+                        height: size.height * 0.7,
                         child: GridView.builder(
                           gridDelegate:
                               const SliverGridDelegateWithMaxCrossAxisExtent(

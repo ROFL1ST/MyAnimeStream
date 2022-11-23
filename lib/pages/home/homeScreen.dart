@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:my_anime_stream/API/apiService.dart';
 import 'package:my_anime_stream/common/colors.dart';
+import 'package:my_anime_stream/helpers/historyManager.dart';
 import 'package:my_anime_stream/pages/favorite/favoritePages.dart';
 import 'package:my_anime_stream/pages/history/historyPages.dart';
 import 'package:my_anime_stream/pages/home/components/airing.dart';
@@ -174,13 +175,13 @@ class _HomePageState extends State<HomePage> {
                     top: top,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 40.0, left: 10),
+                    padding: const EdgeInsets.only(top: 30.0, left: 10),
                     child: Column(
                       children: [
-                        // Continue(),
-                        // SizedBox(
-                        //   height: size.height * 0.03,
-                        // ),
+                        Continue(),
+                        SizedBox(
+                          height: size.height * 0.03,
+                        ),
                         Airing(
                           size: size,
                           top: top,
