@@ -2,11 +2,14 @@
 
 import 'dart:developer';
 
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_anime_stream/API/model/detail.dart';
 import 'package:my_anime_stream/API/model/recent_anime.dart';
 import 'package:my_anime_stream/common/colors.dart';
+import 'package:my_anime_stream/helpers/cache_manager.dart';
 import 'package:my_anime_stream/helpers/historyManager.dart';
 import 'package:my_anime_stream/pages/episode/webview_screen.dart';
 
@@ -47,16 +50,16 @@ class _ListEpisodeState extends State<ListEpisode> {
           return loading(size);
         if (snapshot.hasError) return Text("Error");
         if (snapshot.hasData) {
-          if ((snapshot.data!.episodes!.length % 50).floor() < 50) {
+          if ((snapshot.data!.episodes!.length % 30).floor() < 30) {
             hasRemainingEp = true;
-            remainingEp = (snapshot.data.episodes!.length % 50).floor();
+            remainingEp = (snapshot.data.episodes!.length % 30).floor();
           }
-          totalChipCount = (snapshot.data.episodes!.length / 50).floor();
+          totalChipCount = (snapshot.data.episodes!.length / 30).floor();
           epChunkList.value = snapshot.data.episodes!.sublist(
               0,
-              (hasRemainingEp == true && snapshot.data.episodes!.length < 50)
+              (hasRemainingEp == true && snapshot.data.episodes!.length < 30)
                   ? remainingEp
-                  : 50);
+                  : 30);
           finalChipCount = totalChipCount + (hasRemainingEp ? 1 : 0);
           print('Ep Chunk List ${epChunkList.length}+ $remainingEp');
           return Column(
@@ -87,7 +90,7 @@ class _ListEpisodeState extends State<ListEpisode> {
               //           (e) => episodeCard(e.value, size, e.key, data.episodes, data))
               //       .toList(),
               // )
-              snapshot.data.episodes.length > 50
+              snapshot.data.episodes.length > 30
                   ? SizedBox(
                       height: size.height * 0.09,
                       child: ListView.builder(
@@ -124,7 +127,7 @@ class _ListEpisodeState extends State<ListEpisode> {
                                     backgroundColor:
                                         selectedChipIndex.value == index
                                             ? cardBg
-                                            : Color.fromARGB(255, 19, 18, 18)
+                                            : Color.fromARGB(305, 19, 18, 18)
                                                 .withOpacity(.8),
                                     padding:
                                         EdgeInsets.symmetric(horizontal: 10),
@@ -139,85 +142,174 @@ class _ListEpisodeState extends State<ListEpisode> {
                   : SizedBox(),
               snapshot.data.episodes.isNotEmpty
                   ? Obx(() => SizedBox(
-                        height: size.height * 0.7,
-                        child: GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithMaxCrossAxisExtent(
-                            mainAxisSpacing: 20,
-                            crossAxisSpacing: 20,
-                            maxCrossAxisExtent: 50,
-                          ),
-                          physics: BouncingScrollPhysics(),
-                          shrinkWrap: true,
-                          // scrollDirection: Axis.horizontal,
+                        height: epChunkList.length < 12
+                            ? size.height * 1.3
+                            : epChunkList.length * 98,
+                        child: ListView.builder(
                           itemCount: epChunkList.length,
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
                           itemBuilder: (context, index) {
-                            // return episodeCard(epChunkList[index], size, index,
-                            //     snapshot.data.episodes, snapshot.data);
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: GetBuilder<HistoryManager>(
+                                  builder: (_) => InkWell(
+                                        onTap: () async {
+                                          DateTime now = DateTime.now();
 
-                            return GetBuilder<HistoryManager>(
-                                builder: (_) => InkWell(
-                                      onTap: () async {
-                                        DateTime now = DateTime.now();
-
-                                        final history = RecentAnime(
-                                          id: snapshot.data.id,
-                                          episodeId: epChunkList[index].id,
-                                          currentEp: (int.parse(
-                                                      epChunkList[index]
-                                                          .number) -
-                                                  1)
-                                              .toString(),
-                                          epUrl: epChunkList[index].url,
-                                          title: snapshot.data.title,
-                                          image: snapshot.data.image,
-                                          createAt: now.toString(),
-                                        );
-                                        // log("${history.currentEp}");
-                                        if (historyManager.epsIdList
-                                            .contains(epChunkList[index].id)) {
-                                          historyManager.removeHistory(
-                                              epChunkList[index].id);
-                                          historyManager
-                                              .addHistoryAnime(history);
-                                        } else {
-                                          historyManager
-                                              .addHistoryAnime(history);
-                                        }
-                                        await Get.to(
-                                          WebViewScreen(
-                                            detail: widget.detail,
-                                            slug: epChunkList[index].id,
-                                            mediaUrl: epChunkList[index].url,
-                                            currentIndex:
-                                                int.parse(epChunkList[index].number) -
-                                                    1,
-                                            prevPage: "Detail",
+                                          final history = RecentAnime(
+                                            id: snapshot.data.id,
+                                            episodeId: epChunkList[index].id,
+                                            currentEp:
+                                                (epChunkList[index].number - 1)
+                                                    .toString(),
+                                            title: snapshot.data.title.romaji,
+                                            image: snapshot.data.image,
+                                            createAt: now.toString(),
+                                            type: snapshot.data.type, imageEps: epChunkList[index].image,
+                                          );
+                                          // log("${history.currentEp}");
+                                          if (historyManager.epsIdList.contains(
+                                              epChunkList[index].id)) {
+                                            historyManager.removeHistory(
+                                                epChunkList[index].id);
+                                            historyManager
+                                                .addHistoryAnime(history);
+                                          } else {
+                                            historyManager
+                                                .addHistoryAnime(history);
+                                          }
+                                          await Get.to(
+                                            WebViewScreen(
+                                              detail: widget.detail,
+                                              slug: epChunkList[index].id,
+                                              currentIndex:
+                                                  (epChunkList[index].number -
+                                                          1)
+                                                      .toString(),
+                                              prevPage: "Detail",
+                                              image: epChunkList[index].image,
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          width: size.width,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: historyManager.epsIdList
+                                                    .contains(
+                                                        epChunkList[index].id)
+                                                ? cardBg.withOpacity(0.03)
+                                                : cardBg,
                                           ),
-                                        );
-                                      },
-                                      child: Container(
-                                        width: size.width,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: historyManager.epsIdList
-                                                  .contains(
-                                                      epChunkList[index].id)
-                                              ? cardBg.withOpacity(0.5)
-                                              : cardBg,
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            epChunkList[index]
-                                                .number
-                                                .toString(),
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    child: CachedNetworkImage(
+                                                      imageUrl:
+                                                          epChunkList[index]
+                                                              .image,
+                                                      key: UniqueKey(),
+                                                      cacheManager:
+                                                          CustomCacheManager
+                                                              .instance,
+                                                      height: size.height * 0.1,
+                                                      width: size.width * 0.3,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: size.width * 0.01,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      left: 10.0,
+                                                    ),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        SizedBox(
+                                                          width:
+                                                              size.width * 0.45,
+                                                          child: AutoSizeText(
+                                                            epChunkList[index]
+                                                                    .title ??
+                                                                "",
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            minFontSize: 14,
+                                                            style: historyManager
+                                                                    .epsIdList
+                                                                    .contains(
+                                                                        epChunkList[index]
+                                                                            .id)
+                                                                ? kListTitleStyle
+                                                                    .copyWith(
+                                                                        color: Colors
+                                                                            .grey)
+                                                                : kListTitleStyle,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: size.height *
+                                                              0.005,
+                                                        ),
+                                                        SizedBox(
+                                                          width:
+                                                              size.width * 0.4,
+                                                          child: AutoSizeText(
+                                                            epChunkList[index]
+                                                                    .description ??
+                                                                "",
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            minFontSize: 14,
+                                                            style:
+                                                                kListSubtitle,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 16.0),
+                                                child: Center(
+                                                  child: Text(
+                                                    epChunkList[index]
+                                                        .number
+                                                        .toString(),
+                                                    style: kSubtitleDetailStyle,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
                                           ),
                                         ),
-                                      ),
-                                    ));
+                                      )),
+                            );
                           },
                         ),
                       ))
@@ -292,17 +384,17 @@ class _ListEpisodeState extends State<ListEpisode> {
       ),
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.all(25.0),
+          padding: const EdgeInsets.all(30.0),
         ),
       ),
     );
   }
 
   String getEpisodeRange(int index) {
-    start = ((index * 50) + 1).toString();
-    end = ((50 * (index + 1))).toString();
+    start = ((index * 30) + 1).toString();
+    end = ((30 * (index + 1))).toString();
     if (index == totalChipCount && hasRemainingEp) {
-      end = ((50 * index) + remainingEp).toString();
+      end = ((30 * index) + remainingEp).toString();
     }
     // startVal = start;
     // endVal = (int.parse(end) + 1).toString();

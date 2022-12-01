@@ -48,7 +48,7 @@ class _ResultBuilderState extends State<ResultBuilder> {
     
     return InkWell(
         onTap: () {
-          Get.to(Detail(images: data.image, slug: data.id));
+          Get.to(Detail(images: data.image, slug: data.id, type: data.type,));
         },
         child: Container(
           child: Column(
@@ -73,14 +73,14 @@ class _ResultBuilderState extends State<ResultBuilder> {
                   child: Column(
                     children: [
                       AutoSizeText(
-                        data.title,
+                        data.title.romaji,
                         maxLines: 1,
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.ellipsis,
                         style: kListTitleStyle,
                       ),
                       Text(
-                        data.releaseDate.toString(),
+                        "Released : ${data.releaseDate}",
                         maxLines: 2,
                         textAlign: TextAlign.center,
                         style: kListSubtitle,

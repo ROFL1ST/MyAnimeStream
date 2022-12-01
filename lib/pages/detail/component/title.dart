@@ -67,8 +67,8 @@ class _TopState extends State<Top> {
                     onPressed: () {
                       final item = Favorite(
                         id: snapshot.data.id,
-                        title: snapshot.data.title,
-                        url: snapshot.data.url,
+                        title: snapshot.data.title.romaji,
+                      type: snapshot.data.type,
                         image: snapshot.data.image,
                         genre: snapshot.data.genres.join(", "),
                       );
@@ -76,16 +76,16 @@ class _TopState extends State<Top> {
                           .contains(snapshot.data.id.toString())) {
                         favoriteManager.removeFromFavorite(item);
                         Get.snackbar(
-                          snapshot.data.title,
-                          "Ahh,${snapshot.data.title} Removed From Favorite 😨",
+                          snapshot.data.title.romaji,
+                          "Ahh,${snapshot.data.title.romaji} Removed From Favorite 😨",
                           backgroundColor: Colors.black38,
                           duration: const Duration(milliseconds: 1300),
                           snackPosition: SnackPosition.BOTTOM,
                         );
                       } else {
                         favoriteManager.addToFavorite(item);
-                        Get.snackbar(snapshot.data.title,
-                            'Yeay!!, ${snapshot.data.title} Added to bookmark successfully! 😊',
+                        Get.snackbar(snapshot.data.title.romaji,
+                            'Yeay!!, ${snapshot.data.title.romaji} Added to bookmark successfully! 😊',
                             backgroundColor: Colors.black38,
                             duration: const Duration(milliseconds: 1300),
                             snackPosition: SnackPosition.BOTTOM);
@@ -117,7 +117,7 @@ class _TopState extends State<Top> {
             height: size.height * 0.005,
           ),
           Text(
-            data.title,
+            data.title.romaji,
             style: kTitleDetailStyle,
           ),
           SizedBox(

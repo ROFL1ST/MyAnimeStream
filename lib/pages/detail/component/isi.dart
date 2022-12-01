@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/helpers/cache_manager.dart';
+import 'package:html/parser.dart';
 
 class Isi extends StatefulWidget {
   final detail;
@@ -19,142 +20,135 @@ class _IsiState extends State<Isi> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      builder: (context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState != ConnectionState.done)
-          return isiLoading(widget.size);
-        if (snapshot.hasError) return Text("error");
-        if (snapshot.hasData) return isi(snapshot.data, widget.size);
-        return Text("Kosong");
-      },
-      future: widget.detail,
-    );
-  }
+    Size size = MediaQuery.of(context).size;
 
-  Widget isi(data, size) {
-    print(isOpen);
-    return InkWell(
-      onTap: () {
-        setState(() {
-          isOpen = !isOpen;
-        });
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: cardBg,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: CachedNetworkImage(
-                  key: UniqueKey(),
-                  cacheManager: CustomCacheManager.instance,
-                  imageUrl: data.image,
-                  height: size.height * 0.1,
-                  width: size.width * 0.2,
-                  fit: BoxFit.cover,
-                ),
+    return FutureBuilder(
+        future: widget.detail,
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState != ConnectionState.done)
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: cardBg,
               ),
-              SizedBox(
-                width: size.width * 0.08,
-              ),
-              Container(
-                width: size.width * 0.57,
+              child: Padding(
+                padding: const EdgeInsets.all(18.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    isOpen
-                        ? Text(data.description)
-                        : AutoSizeText(
-                            "${data.description}",
-                            maxLines: 5,
-                            maxFontSize: 14,
-                            style: TextStyle(
-                              fontSize: 18,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Synopsis",
+                          style: kTitleDetailStyle,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: size.height * 0.01,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: cardBg,
+                              ),
+                              height: size.height * 0.015,
+                              width: size.width * 0.6,
                             ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                            SizedBox(
+                              height: size.height * 0.007,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: cardBg,
+                              ),
+                              height: size.height * 0.015,
+                              width: size.width * 0.4,
+                            ),
+                            SizedBox(
+                              height: size.height * 0.007,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: cardBg,
+                              ),
+                              height: size.height * 0.015,
+                              width: size.width * 0.25,
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
                   ],
                 ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget isiLoading(size) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: cardBg,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: Container(
-                  height: size.height * 0.1,
-                  width: size.width * 0.2,
-                  decoration: BoxDecoration(color: bg),
-                )),
-            SizedBox(
-              width: size.width * 0.08,
-            ),
-            Container(
-              width: size.width * 0.57,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: cardBg,
-                    ),
-                    height: size.height * 0.01,
-                    width: size.width * 0.6,
-                  ),
-                  SizedBox(
-                    height: size.height * 0.007,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: cardBg,
-                    ),
-                    height: size.height * 0.01,
-                    width: size.width * 0.4,
-                  ),
-                  SizedBox(
-                    height: size.height * 0.007,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: cardBg,
-                    ),
-                    height: size.height * 0.01,
-                    width: size.width * 0.2,
-                  ),
-                ],
               ),
-            )
-          ],
-        ),
-      ),
-    );
+            );
+          if (snapshot.hasError) return Text("Error");
+          if (snapshot.hasData) {
+            String _parseHtmlString(String htmlString) {
+              final document = parse(htmlString);
+              final String parsedString =
+                  parse(document.body?.text).documentElement!.text;
+
+              return parsedString;
+            }
+
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: cardBg,
+              ),
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    isOpen = !isOpen;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Synopsis",
+                            style: kTitleDetailStyle,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.height * 0.01,
+                      ),
+                      !isOpen
+                          ? AutoSizeText(
+                              _parseHtmlString(snapshot.data.description),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: 12),
+                            )
+                          : AutoSizeText(
+                              _parseHtmlString(snapshot.data.description),
+                              style: TextStyle(fontSize: 12),
+                            )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          } else {
+            return Text("Kosong");
+          }
+        });
   }
 }

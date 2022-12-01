@@ -34,10 +34,10 @@ class HistoryManager extends GetxController {
         id: anime.id,
         episodeId: anime.episodeId,
         currentEp: anime.currentEp,
-        epUrl: anime.epUrl,
         title: anime.title,
         image: anime.image,
-        createAt: now.toString());
+        createAt: now.toString(),
+        type: anime.type, imageEps: anime.imageEps);
     for (var rm in _recentAnimes) {
       if (rm.episodeId == anime.episodeId) {
         HistoryDatabase.instance.remove(anime.episodeId);
@@ -63,7 +63,7 @@ class HistoryManager extends GetxController {
   void removeHistory(String episodeId) {
     _recentAnimes.removeWhere((element) => element.episodeId == episodeId);
     _epsIdList.removeWhere((element) => (element == episodeId));
-    
+
     HistoryDatabase.instance.remove(episodeId);
     return update();
   }

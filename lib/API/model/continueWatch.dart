@@ -6,9 +6,10 @@ class ContinueWatch {
     // id Episode
     required this.episodeId,
     required this.currentEp,
-    required this.epUrl,
     required this.title,
+    required this.type,
     required this.image,
+    required this.imageEps,
     required this.createAt,
     // required this.animeUrl,
   });
@@ -17,18 +18,22 @@ class ContinueWatch {
   final String episodeId;
 
   final String title;
-  final String epUrl;
+  final String type;
+
   final String currentEp;
   final String image;
+  final String imageEps;
+
   final String createAt;
 
   factory ContinueWatch.fromJson(Map<String, dynamic> json) => ContinueWatch(
         id: json['id'],
         episodeId: json['episodeId'],
         title: json['title'],
-        epUrl: json['epUrl'],
+        type: json['type'],
         currentEp: json['currentEp'],
         image: json['image'],
+        imageEps: json['imageEps'],
         createAt: json['createAt'],
       );
 
@@ -36,9 +41,10 @@ class ContinueWatch {
         'id': id,
         'episodeId': episodeId,
         'title': title,
-        'epUrl': epUrl,
+        'type': type,
         'currentEp': currentEp,
         'image': image,
+        'imageEps': imageEps,
         'createAt': createAt,
       };
 }

@@ -73,7 +73,7 @@ class _AiringState extends State<Airing> {
   Widget card(data, size) {
     return InkWell(
       onTap: () {
-        Get.to(Detail(images: data.image, slug: data.id));
+        Get.to(Detail(images: data.image, slug: data.id, type: data.type,));
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),

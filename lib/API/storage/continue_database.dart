@@ -16,9 +16,13 @@ class ContinueDatabase {
   final String idCol = "id";
   final String episodeIdCol = "episodeId";
   final String titleCol = "title";
+  final String typeCol = "type";
+
   final String currentEpCol = "currentEp";
-  final String epUrlCol = "epUrl";
+
   final String imageCol = "image";
+  final String imageEpsCol = "imageEps";
+
   final String createAtCol = "createAt";
 
   final String type = 'TEXT NOT NULL';
@@ -38,7 +42,7 @@ class ContinueDatabase {
   Future _createDatabase(Database database, version) async {
     await database.execute('''
     CREATE TABLE $tableContinue (
-      $idCol $type,$episodeIdCol $type, $titleCol $type,  $currentEpCol $type,$epUrlCol $type, $imageCol $type, $createAtCol $type)
+      $idCol $type,$episodeIdCol $type, $titleCol $type, $typeCol $type, $currentEpCol $type, $imageCol $type, $imageEpsCol $type, $createAtCol $type)
     ''');
   }
 

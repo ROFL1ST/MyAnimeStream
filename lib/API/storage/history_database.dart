@@ -15,9 +15,12 @@ class HistoryDatabase {
   final String episodeIdCol = "episodeId";
 
   final String titleCol = "title";
-  final String epUrlCol = "epUrl";
+  final String typeCol = "type";
+
   final String currentEpCol = "currentEp";
   final String imageCol = "image";
+  final String imageEpsCol = "imageEps";
+
   final String createAtCol = "createAt";
 
   final String type = 'TEXT NOT NULL';
@@ -37,7 +40,7 @@ class HistoryDatabase {
   Future _createDatabase(Database db, version) async {
     await db.execute('''
     CREATE TABLE $tableHistory (
-      $idCol $type,$episodeIdCol $type, $titleCol $type, $epUrlCol $type, $currentEpCol $type, $imageCol $type, $createAtCol $type)
+      $idCol $type,$episodeIdCol $type, $titleCol $type, $typeCol $type,   $currentEpCol $type, $imageCol $type, $imageEpsCol $type, $createAtCol $type)
     ''');
   }
 

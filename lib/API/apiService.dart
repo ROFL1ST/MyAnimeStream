@@ -8,16 +8,35 @@ import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_anime_stream/API/model/detail.dart';
 import 'package:my_anime_stream/API/model/episodeModa.dart';
+import 'package:my_anime_stream/API/model/genreSelect.dart';
+import 'package:my_anime_stream/API/model/popularAnime.dart';
 import 'package:my_anime_stream/API/model/recent.dart';
 import 'package:my_anime_stream/API/model/search.dart';
 import 'package:my_anime_stream/API/model/top.dart';
 
 class ApiService {
-  String base_url = "https://api.consumet.org/anime/gogoanime/";
-  String top_airing = "top-airing";
-  String recent_episodes = "recent-episodes";
+  String base_url = "https://api.consumet.org/meta/anilist/";
+  String top_airing = "trending";
+  String popular_anime = "popular";
+  String recent_episodes = "recent-episodes?perPage=16";
   String detail_anime = "info";
   String episode_url = "watch";
+  String genre_selected = "genre";
+
+  Future popular() async {
+    Uri urlApi = Uri.parse(base_url + popular_anime);
+    Map<String, String> requestHeaders = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    final res = await http.get(urlApi, headers: requestHeaders);
+    if (res.statusCode == 200) {
+      return popularAnimeFromJson(res.body.toString());
+    } else {
+      return false;
+    }
+  }
 
   Future top() async {
     Uri urlApi = Uri.parse(base_url + top_airing);
@@ -45,7 +64,7 @@ class ApiService {
     final res = await http.get(urlApi, headers: requestHeaders);
 
     if (res.statusCode == 200) {
-      return recentFromJson(res.body.toString());
+      return recentAnimeFromJson(res.body.toString());
     } else {
       return false;
     }
@@ -87,7 +106,7 @@ class ApiService {
 
   Future search(values, page) async {
     log("$values");
-    Uri urlApi = Uri.parse("$base_url$values?page=$page");
+    Uri urlApi = Uri.parse("$base_url$values?page=$page&perPage=16");
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
@@ -95,6 +114,27 @@ class ApiService {
     final res = await http.get(urlApi, headers: requestHeaders);
     if (res.statusCode == 200) {
       return searchFromJson(res.body.toString());
+    } else {
+      return false;
+    }
+  }
+
+  Future genre(genre, page) async {
+    final list = [];
+   list.add(genre);
+    Uri urlApi = Uri.parse(base_url + genre_selected + "?genres=" + "['$genre']", );
+    String url = (base_url + genre_selected + "?genres=" + "['$genre']");
+    Map<String, String> requestHeaders = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+   
+   log("$list, $urlApi");
+
+    final res = await http.get(urlApi, headers: requestHeaders,);
+    if (res.statusCode == 200) {
+      return genreSelectFromJson(res.body.toString());
     } else {
       return false;
     }

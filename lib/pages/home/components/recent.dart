@@ -64,9 +64,12 @@ class _RecentState extends State<Recent> {
             if (snapshot.connectionState != ConnectionState.done)
               return listLoading(widget.size);
             if (snapshot.hasError) return error(widget.size);
-            if (snapshot.hasData)
-              return listBuilder(snapshot.data.results, widget.size);
-            return Text("Kosong");
+            if (snapshot.hasData) {
+              var data = snapshot.data.results;
+              return listBuilder(data, widget.size);
+            } else {
+              return Text("Kosong");
+            }
           },
           future: widget.recent,
         )
@@ -104,10 +107,11 @@ class _RecentState extends State<Recent> {
             id: data.id,
             episodeId: data.episodeId,
             currentEp: (data.episodeNumber - 1).toString(),
-            epUrl: data.url,
-            title: data.title,
+            title: data.title.romaji,
             image: data.image,
             createAt: now.toString(),
+            type: data.type,
+            imageEps: data.image,
           );
           if (historyManager.epsIdList.contains(data.episodeId)) {
             historyManager.removeHistory(data.episodeId);
@@ -120,7 +124,8 @@ class _RecentState extends State<Recent> {
             WebViewScreen(
               slug: data.episodeId,
               detail: ApiService().detail(data.id),
-              currentIndex: data.episodeNumber - 1,
+              currentIndex: (data.episodeNumber - 1).toString(),
+              image: data.image,
               prevPage: "Home",
             ),
           );

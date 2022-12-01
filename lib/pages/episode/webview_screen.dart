@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:floating/floating.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,7 @@ import 'package:my_anime_stream/API/apiService.dart';
 import 'package:my_anime_stream/API/model/favorite.dart';
 import 'package:my_anime_stream/API/model/recent_anime.dart';
 import 'package:my_anime_stream/common/colors.dart';
+import 'package:my_anime_stream/helpers/cache_manager.dart';
 import 'package:my_anime_stream/helpers/favoriteManager.dart';
 import 'package:my_anime_stream/helpers/historyManager.dart';
 import 'package:my_anime_stream/pages/detail/component/isi.dart';
@@ -33,13 +35,15 @@ class WebViewScreen extends StatefulWidget {
   final detail;
   final currentIndex;
   final prevPage;
+  final image;
   const WebViewScreen(
       {Key? key,
       this.mediaUrl,
       required this.slug,
       required this.detail,
       required this.currentIndex,
-      required this.prevPage})
+      required this.prevPage,
+      required this.image})
       : super(key: key);
 
   @override
@@ -60,7 +64,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   @override
   void initState() {
-    index = widget.currentIndex;
+    index = int.parse(widget.currentIndex);
     top = ApiService().top();
     eps = ApiService().episode(widget.slug);
     super.initState();
@@ -157,7 +161,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                 FutureBuilder(
                   builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState != ConnectionState.done)
-                      return loadingPlayer(size);
+                      return loadingPlayer(size, widget.image);
                     if (snapshot.hasError) return Text("Error");
                     if (snapshot.hasData)
                       return (snapshot.data == "message")
@@ -391,12 +395,11 @@ class _WebViewScreenState extends State<WebViewScreen> {
                             id: data.id,
                             episodeId: data.episodes[index].id,
                             currentEp:
-                                (int.parse(data.episodes[index].number) - 1)
-                                    .toString(),
-                            epUrl: data.episodes[index].url,
-                            title: data.title,
+                                (data.episodes[index].number - 1).toString(),
+                            title: data.title.romaji,
                             image: data.image,
                             createAt: now.toString(),
+                            type: data.type, imageEps: data.episodes[index].image,
                           );
                           if (historyManager.epsIdList
                               .contains(data.episodes[index].id)) {
@@ -431,7 +434,11 @@ class _WebViewScreenState extends State<WebViewScreen> {
                     if (widget.prevPage != "Home") {
                       Get.back();
                     } else {
-                      Get.off(Detail(images: data.image, slug: data.id));
+                      Get.off(Detail(
+                        images: data.image,
+                        slug: data.id,
+                        type: data.type,
+                      ));
                     }
                   },
                   child: Container(
@@ -493,12 +500,11 @@ class _WebViewScreenState extends State<WebViewScreen> {
                             id: data.id,
                             episodeId: data.episodes[index].id,
                             currentEp:
-                                (int.parse(data.episodes[index].number) - 1)
-                                    .toString(),
-                            epUrl: data.episodes[index].url,
-                            title: data.title,
+                                (data.episodes[index].number - 1).toString(),
+                            title: data.title.romaji,
                             image: data.image,
                             createAt: now.toString(),
+                            type: data.type, imageEps: data.episodes[index].image,
                           );
                           if (historyManager.epsIdList
                               .contains(data.episodes[index].id)) {
@@ -619,12 +625,19 @@ class _WebViewScreenState extends State<WebViewScreen> {
     );
   }
 
-  Widget loadingPlayer(size) {
+  Widget loadingPlayer(size, image) {
     return Container(
-      height: size.height * 0.3,
       decoration: BoxDecoration(
-        color: cardBg,
+        image: DecorationImage(
+            image: CachedNetworkImageProvider(
+              image,
+              cacheManager: CustomCacheManager.instance,
+            ),
+            fit: BoxFit.cover,
+            opacity: 0.3),
       ),
+      height: size.height * 0.3,
+      child: Center(child: CircularProgressIndicator()),
     );
   }
 
@@ -716,7 +729,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
     if (widget.slug != data.id) {
       return InkWell(
         onTap: () {
-          Get.off(Detail(images: data.image, slug: data.id));
+          Get.off(Detail(images: data.image, slug: data.id, type: data.type,));
         },
         child: Container(
           width: size.width,
@@ -749,7 +762,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                         Container(
                           width: size.width * 0.5,
                           child: AutoSizeText(
-                            data.title,
+                            data.title.romaji,
                             style: kListTitleStyle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -779,7 +792,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                     final item = Favorite(
                       id: data.id,
                       title: data.title,
-                      url: data.url,
+                      type: data.type,
                       image: data.image,
                       genre: data.genres.join(", "),
                     );

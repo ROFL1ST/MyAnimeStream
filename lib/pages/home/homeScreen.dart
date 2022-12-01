@@ -8,6 +8,7 @@ import 'package:my_anime_stream/API/apiService.dart';
 import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/helpers/historyManager.dart';
 import 'package:my_anime_stream/pages/favorite/favoritePages.dart';
+import 'package:my_anime_stream/pages/genre/genreList.dart';
 import 'package:my_anime_stream/pages/history/historyPages.dart';
 import 'package:my_anime_stream/pages/home/components/airing.dart';
 import 'package:my_anime_stream/pages/home/components/carousel.dart';
@@ -26,6 +27,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late Future top;
   late Future recent;
+  late Future popular;
 
   void refreshCarousel() {
     setState(() {
@@ -50,6 +52,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     top = ApiService().top();
     recent = ApiService().recent(1);
+    popular = ApiService().popular();
     super.initState();
   }
 
@@ -123,6 +126,14 @@ class _HomePageState extends State<HomePage> {
                 leading: const Icon(Icons.history),
               ),
               ListTile(
+                onTap: () => Get.to(
+                  GenreListPage()
+                ),
+                hoverColor: Colors.white,
+                title: const Text('Genre'),
+                leading: const Icon(Icons.list_outlined),
+              ),
+              ListTile(
                 hoverColor: Colors.white,
                 title: const Text('About'),
                 leading: const Icon(Icons.info),
@@ -172,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                   Carousel(
                     refreshCarousel: refreshCarousel,
                     size: size,
-                    top: top,
+                    popular: popular,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 30.0, left: 10),

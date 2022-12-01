@@ -1,5 +1,7 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, sort_child_properties_last
 
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -8,15 +10,16 @@ import 'package:get/get.dart';
 import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/helpers/cache_manager.dart';
 import 'package:my_anime_stream/pages/detail/detail.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class Carousel extends StatefulWidget {
   final size;
-  final top;
+  final popular;
   final refreshCarousel;
   const Carousel(
       {super.key,
       required this.size,
-      required this.top,
+      required this.popular,
       required this.refreshCarousel});
 
   @override
@@ -33,19 +36,21 @@ class _CarouselState extends State<Carousel> {
         if (snapshot.hasError)
           return errorCarousel(widget.size, widget.refreshCarousel);
         if (snapshot.hasData) {
-          snapshot.data.results.shuffle();
-          return listBuilder(snapshot.data.results, widget.size);
+          var data = snapshot.data.results;
+
+          return listBuilder(data, widget.size);
+          // return Container();s
         } else {
           return Text("Kosong");
         }
       },
-      future: widget.top,
+      future: widget.popular,
     );
   }
 
   Widget listBuilder(data, size) {
     return CarouselSlider.builder(
-      itemCount: 3,
+      itemCount: 5,
       itemBuilder: (BuildContext context, index, realIndex) {
         return cardCarousel(data, index, size);
       },
@@ -67,6 +72,7 @@ class _CarouselState extends State<Carousel> {
           Get.to(Detail(
             images: data[index].image,
             slug: data[index].id,
+            type: data[index].type,
           ));
         },
         child: Container(
@@ -89,7 +95,7 @@ class _CarouselState extends State<Carousel> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  data[index].title,
+                  data[index].title.romaji,
                   style: kTitleBannerStyle,
                 ),
               ),
@@ -106,7 +112,7 @@ class _CarouselState extends State<Carousel> {
       itemCount: 3,
       itemBuilder: (BuildContext context, index, realIndex) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal:4.0),
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
           child: Center(
             child: Container(
               height: size.height,
@@ -139,7 +145,6 @@ class _CarouselState extends State<Carousel> {
       },
       options: CarouselOptions(
           height: size.height * 0.2,
-
           initialPage: 0,
           // enlargeCenterPage: true,
           viewportFraction: 0.92),

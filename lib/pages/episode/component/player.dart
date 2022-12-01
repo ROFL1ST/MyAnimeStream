@@ -49,6 +49,7 @@ class _PlayerState extends State<Player> {
                     ? VideoViewer(
                         source: data.data!,
                         onFullscreenFixLandscape: true,
+                        controller: VideoViewerController(),
                         style: VideoViewerStyle(
                           thumbnail: Image.network(
                             "https://play-lh.googleusercontent.com/aA2iky4PH0REWCcPs9Qym2X7e9koaa1RtY-nKkXQsDVU6Ph25_9GkvVuyhS72bwKhN1P",

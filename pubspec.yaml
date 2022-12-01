@@ -54,6 +54,7 @@ dependencies:
   video_viewer: ^1.2.7
   floating: ^1.1.1+1
   timeago: ^3.3.0
+  youtube_player_flutter: ^8.1.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

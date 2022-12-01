@@ -176,10 +176,10 @@ class _HistoryPagesState extends State<HistoryPages> {
                 id: data.id,
                 episodeId: data.episodeId,
                 currentEp: data.currentEp,
-                epUrl: data.epUrl,
+               
                 title: data.title,
                 image: data.image,
-                createAt: now.toString(),
+                createAt: now.toString(), type: data.type, imageEps: data.imageEps,
               );
               if (historyManager.epsIdList.contains(data.episodeId)) {
                 historyManager.removeHistory(data.episodeId);
@@ -194,6 +194,8 @@ class _HistoryPagesState extends State<HistoryPages> {
                   detail: ApiService().detail(data.id),
                   currentIndex: int.parse(data.currentEp),
                   prevPage: "Home",
+              image: data.image,
+
                 ),
               );
             },

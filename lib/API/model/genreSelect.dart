@@ -1,16 +1,16 @@
 // To parse this JSON data, do
 //
-//     final search = searchFromJson(jsonString);
+//     final genreSelect = genreSelectFromJson(jsonString);
 
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
-Search searchFromJson(String str) => Search.fromJson(json.decode(str));
+GenreSelect genreSelectFromJson(String str) => GenreSelect.fromJson(json.decode(str));
 
-String searchToJson(Search data) => json.encode(data.toJson());
+String genreSelectToJson(GenreSelect data) => json.encode(data.toJson());
 
-class Search {
-    Search({
+class GenreSelect {
+    GenreSelect({
         required this.currentPage,
         required this.hasNextPage,
         required this.results,
@@ -20,7 +20,7 @@ class Search {
     bool hasNextPage;
     List<Result> results;
 
-    factory Search.fromJson(Map<String, dynamic> json) => Search(
+    factory GenreSelect.fromJson(Map<String, dynamic> json) => GenreSelect(
         currentPage: json["currentPage"],
         hasNextPage: json["hasNextPage"],
         results: List<Result>.from(json["results"].map((x) => Result.fromJson(x))),
@@ -38,66 +38,62 @@ class Result {
         required this.id,
         required this.malId,
         required this.title,
-        required this.status,
         required this.image,
-        required this.cover,
-        required this.popularity,
+        required this.trailer,
         required this.description,
+        required this.cover,
         required this.rating,
-        required this.genres,
+        required this.releaseDate,
         required this.color,
         required this.totalEpisodes,
+        required this.duration,
         required this.type,
-        required this.releaseDate,
     });
 
     String id;
     int malId;
     Title title;
-    String status;
     String image;
-    String cover;
-    int popularity;
+    Trailer trailer;
     String description;
+    String cover;
     int rating;
-    List<String> genres;
+    int releaseDate;
     String color;
     int totalEpisodes;
+    int duration;
     String type;
-    dynamic releaseDate;
 
     factory Result.fromJson(Map<String, dynamic> json) => Result(
         id: json["id"],
-        malId: json["malId"] == null ? null : json["malId"],
+        malId: json["malId"],
         title: Title.fromJson(json["title"]),
-        status: json["status"],
         image: json["image"],
-        cover: json["cover"] == null ? null : json["cover"],
-        popularity: json["popularity"],
-        description: json["description"] == null ? null : json["description"],
-        rating: json["rating"] == null ? null : json["rating"],
-        genres: List<String>.from(json["genres"].map((x) => x)),
-        color: json["color"],
-        totalEpisodes: json["totalEpisodes"] == null ? null : json["totalEpisodes"],
-        type: json["type"],
+        trailer: Trailer.fromJson(json["trailer"]),
+        description: json["description"],
+        cover: json["cover"],
+        rating: json["rating"],
         releaseDate: json["releaseDate"],
+        color: json["color"],
+        totalEpisodes: json["totalEpisodes"],
+        duration: json["duration"],
+        type: json["type"],
     );
 
     Map<String, dynamic> toJson() => {
         "id": id,
-        "malId": malId == null ? null : malId,
+        "malId": malId,
         "title": title.toJson(),
-        "status": status,
         "image": image,
-        "cover": cover == null ? null : cover,
-        "popularity": popularity,
-        "description": description == null ? null : description,
-        "rating": rating == null ? null : rating,
-        "genres": List<dynamic>.from(genres.map((x) => x)),
-        "color": color,
-        "totalEpisodes": totalEpisodes == null ? null : totalEpisodes,
-        "type": type,
+        "trailer": trailer.toJson(),
+        "description": description,
+        "cover": cover,
+        "rating": rating,
         "releaseDate": releaseDate,
+        "color": color,
+        "totalEpisodes": totalEpisodes,
+        "duration": duration,
+        "type": type
     };
 }
 
@@ -110,21 +106,32 @@ class Title {
     });
 
     String romaji;
-    dynamic english;
+    String english;
     String native;
     String userPreferred;
 
     factory Title.fromJson(Map<String, dynamic> json) => Title(
         romaji: json["romaji"],
-        english: json["english"],
+        english: json["english"] == null ? null : json["english"],
         native: json["native"],
         userPreferred: json["userPreferred"],
     );
 
     Map<String, dynamic> toJson() => {
         "romaji": romaji,
-        "english": english,
+        "english": english == null ? null : english,
         "native": native,
         "userPreferred": userPreferred,
     };
 }
+
+class Trailer {
+    Trailer();
+
+    factory Trailer.fromJson(Map<String, dynamic> json) => Trailer(
+    );
+
+    Map<String, dynamic> toJson() => {
+    };
+}
+

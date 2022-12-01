@@ -227,6 +227,7 @@ class _RecentPagesState extends State<RecentPages> {
               detail: ApiService().detail(data.id),
               currentIndex: data.episodeNumber - 1,
               prevPage: "Home",
+              image: data.image,
             ),
           );
           // arah ke episode yg dituju

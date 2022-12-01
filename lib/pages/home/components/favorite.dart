@@ -119,6 +119,7 @@ class _FavoriteState extends State<Favorite> {
             Detail(
               images: data.image,
               slug: data.id,
+              type: data.type,
             ),
           );
         },

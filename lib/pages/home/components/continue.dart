@@ -93,10 +93,9 @@ class _ContinueState extends State<Continue> {
             id: data.id,
             episodeId: data.episodeId,
             currentEp: data.currentEp,
-            epUrl: data.epUrl,
             title: data.title,
             image: data.image,
-            createAt: now.toString(),
+            createAt: now.toString(), type: data.type, imageEps: data.imageEps,
           );
           if (historyManager.epsIdList.contains(data.episodeId)) {
             historyManager.removeHistory(data.episodeId);
@@ -109,7 +108,8 @@ class _ContinueState extends State<Continue> {
             WebViewScreen(
               slug: data.episodeId,
               detail: ApiService().detail(data.id),
-              currentIndex: int.parse(data.currentEp),
+              currentIndex: data.currentEp,
+              image: data.image,
               prevPage: "Home",
             ),
           );
@@ -135,7 +135,7 @@ class _ContinueState extends State<Continue> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: NetworkImageWithCacheManager(
-                                imageUrl: data.image,
+                                imageUrl: data.imageEps,
                               ),
                             ),
                             // Column(
@@ -154,22 +154,39 @@ class _ContinueState extends State<Continue> {
                             //     )
                             //   ],
                             // ),
-                            // Column(
-                            //   crossAxisAlignment: CrossAxisAlignment.start,
-                            //   mainAxisAlignment: MainAxisAlignment.end,
-                            //   children: [
-                            //     Container(
-                            //       width: size.width / 4,
-                            //       height: 6,
-                            //       decoration: BoxDecoration(
-                            //         color: Colors.white,
-                            //         borderRadius: BorderRadius.all(
-                            //           Radius.circular(2),
-                            //         ),
-                            //       ),
-                            //     )
-                            //   ],
-                            // )
+                            Container(
+                                  height: size.height * 0.03,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    gradient: LinearGradient(
+                                      begin: FractionalOffset.topCenter,
+                                      end: FractionalOffset.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        bg,
+                                      ],
+                                      stops: [0.0, 1.0],
+                                    ),
+                                  ),
+                                ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: SizedBox(
+                                      width: size.width * 0.4,
+                                      child: AutoSizeText(
+                                        data.title,
+                                        maxLines: 1,
+                                         style: kTitleBannerStyle.copyWith(fontSize: 14),
+                                        overflow: TextOverflow.clip,
+                                      )),
+                                )
+                              ],
+                            )
                           ],
                         ),
                       ),
@@ -177,14 +194,18 @@ class _ContinueState extends State<Continue> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 4.0, left: 10, right: 10,),
+                  padding: const EdgeInsets.only(
+                    top: 4.0,
+                    left: 10,
+                    right: 10,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(
                         width: size.width * 0.3,
                         child: AutoSizeText(
-                          "Episode ${int.parse(data.currentEp) + 1}",
+                          data.type == "MOVIE" ? "Movies" : "Episode ${int.parse(data.currentEp) + 1}",
                           minFontSize: 5,
                           maxLines: 1,
                           style: kTitleTextStyle.copyWith(fontSize: 14),

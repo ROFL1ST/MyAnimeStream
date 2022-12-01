@@ -1,35 +1,29 @@
 // To parse this JSON data, do
 //
-//     final recentAnime = recentAnimeFromJson(jsonString);
+//     final popularAnime = popularAnimeFromJson(jsonString);
 
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
-RecentAnime recentAnimeFromJson(String str) =>
-    RecentAnime.fromJson(json.decode(str));
+PopularAnime popularAnimeFromJson(String str) =>
+    PopularAnime.fromJson(json.decode(str));
 
-String recentAnimeToJson(RecentAnime data) => json.encode(data.toJson());
+String popularAnimeToJson(PopularAnime data) => json.encode(data.toJson());
 
-class RecentAnime {
-  RecentAnime({
+class PopularAnime {
+  PopularAnime({
     required this.currentPage,
     required this.hasNextPage,
-    required this.totalPages,
-    required this.totalResults,
     required this.results,
   });
 
-  String currentPage;
+  int currentPage;
   bool hasNextPage;
-  int totalPages;
-  int totalResults;
   List<Result> results;
 
-  factory RecentAnime.fromJson(Map<String, dynamic> json) => RecentAnime(
-        currentPage: json["currentPage"].toString(),
+  factory PopularAnime.fromJson(Map<String, dynamic> json) => PopularAnime(
+        currentPage: json["currentPage"],
         hasNextPage: json["hasNextPage"],
-        totalPages: json["totalPages"],
-        totalResults: json["totalResults"],
         results:
             List<Result>.from(json["results"].map((x) => Result.fromJson(x))),
       );
@@ -37,8 +31,6 @@ class RecentAnime {
   Map<String, dynamic> toJson() => {
         "currentPage": currentPage,
         "hasNextPage": hasNextPage,
-        "totalPages": totalPages,
-        "totalResults": totalResults,
         "results": List<dynamic>.from(results.map((x) => x.toJson())),
       };
 }
@@ -49,12 +41,15 @@ class Result {
     required this.malId,
     required this.title,
     required this.image,
+    required this.trailer,
+    required this.description,
+    required this.status,
+    required this.cover,
     required this.rating,
-    required this.color,
-    required this.episodeId,
-    required this.episodeTitle,
-    required this.episodeNumber,
+    required this.releaseDate,
     required this.genres,
+    required this.totalEpisodes,
+    required this.duration,
     required this.type,
   });
 
@@ -62,12 +57,15 @@ class Result {
   int malId;
   Title title;
   String image;
+  Trailer trailer;
+  String description;
+  String status;
+  String cover;
   int rating;
-  String color;
-  String episodeId;
-  String episodeTitle;
-  int episodeNumber;
+  int releaseDate;
   List<String> genres;
+  int totalEpisodes;
+  int duration;
   String type;
 
   factory Result.fromJson(Map<String, dynamic> json) => Result(
@@ -75,12 +73,15 @@ class Result {
         malId: json["malId"],
         title: Title.fromJson(json["title"]),
         image: json["image"],
-        rating: json["rating"] == null ? null : json["rating"],
-        color: json["color"] == null ? null : json["color"],
-        episodeId: json["episodeId"],
-        episodeTitle: json["episodeTitle"],
-        episodeNumber: json["episodeNumber"],
+        trailer: Trailer.fromJson(json["trailer"]),
+        description: json["description"],
+        status: json["status"],
+        cover: json["cover"],
+        rating: json["rating"],
+        releaseDate: json["releaseDate"],
         genres: List<String>.from(json["genres"].map((x) => x)),
+        totalEpisodes: json["totalEpisodes"],
+        duration: json["duration"],
         type: json["type"],
       );
 
@@ -89,12 +90,15 @@ class Result {
         "malId": malId,
         "title": title.toJson(),
         "image": image,
-        "rating": rating == null ? null : rating,
-        "color": color == null ? null : color,
-        "episodeId": episodeId,
-        "episodeTitle": episodeTitle,
-        "episodeNumber": episodeNumber,
+        "trailer": trailer.toJson(),
+        "description": description,
+        "status": status,
+        "cover": cover,
+        "rating": rating,
+        "releaseDate": releaseDate,
         "genres": List<dynamic>.from(genres.map((x) => x)),
+        "totalEpisodes": totalEpisodes,
+        "duration": duration,
         "type": type,
       };
 }
@@ -114,15 +118,39 @@ class Title {
 
   factory Title.fromJson(Map<String, dynamic> json) => Title(
         romaji: json["romaji"],
-        english: json["english"] == null ? null : json["english"],
+        english: json["english"],
         native: json["native"],
         userPreferred: json["userPreferred"],
       );
 
   Map<String, dynamic> toJson() => {
         "romaji": romaji,
-        "english": english == null ? null : english,
+        "english": english,
         "native": native,
         "userPreferred": userPreferred,
+      };
+}
+
+class Trailer {
+  Trailer({
+    required this.id,
+    required this.site,
+    required this.thumbnail,
+  });
+
+  String id;
+  String site;
+  String thumbnail;
+
+  factory Trailer.fromJson(Map<String, dynamic> json) => Trailer(
+        id: json["id"],
+        site: json["string"],
+        thumbnail: json["thumbnail"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "site": site,
+        "thumbnail": thumbnail,
       };
 }
