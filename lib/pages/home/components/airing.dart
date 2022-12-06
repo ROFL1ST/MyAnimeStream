@@ -73,17 +73,25 @@ class _AiringState extends State<Airing> {
   Widget card(data, size) {
     return InkWell(
       onTap: () {
-        Get.to(Detail(images: data.image, slug: data.id, type: data.type,));
+        Get.to(Detail(
+          images: data.image,
+          slug: data.id,
+          type: data.type,
+        ));
       },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: CachedNetworkImage(
-          key: UniqueKey(),
-          cacheManager: CustomCacheManager.instance,
-          // height: 200,
-          // width: 180,
-          fit: BoxFit.cover,
-          imageUrl: data.image.toString(),
+      child: Hero(
+        tag: data.id,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: CachedNetworkImage(
+            key: UniqueKey(),
+            cacheManager: CustomCacheManager.instance,
+            // height: 200,
+            // width: 180,
+            fit: BoxFit.cover,
+            imageUrl: data.image.toString(),
+            placeholder: (context, url) => cardLoading(size),
+          ),
         ),
       ),
       // child: Container(

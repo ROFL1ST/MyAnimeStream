@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:my_anime_stream/common/colors.dart';
+import 'package:my_anime_stream/helpers/cache_manager.dart';
 
 class CharactersBuilder extends StatefulWidget {
   final detail;
@@ -90,17 +91,26 @@ class _CharactersBuilderState extends State<CharactersBuilder> {
                           ),
                           child: Column(
                             children: [
-                              Container(
+                              SizedBox(
                                 height: size.height * 0.09,
                                 width: size.width * 0.2,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: CachedNetworkImageProvider(
-                                        snapshot.data.characters[index].image,
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(105),
+                                    child: CachedNetworkImage(
+                                      imageUrl:
+                                          snapshot.data.characters[index].image,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Container(
+                                        height: size.height * 0.09,
+                                        width: size.width * 0.2,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                            color: cardBg),
+                                        child:
+                                            Padding(padding: EdgeInsets.all(8)),
                                       ),
-                                      fit: BoxFit.cover),
-                                  borderRadius: BorderRadius.circular(100),
-                                ),
+                                    )),
                               ),
                               SizedBox(
                                 width: size.width * 0.14,

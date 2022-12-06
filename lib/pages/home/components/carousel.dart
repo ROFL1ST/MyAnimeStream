@@ -36,7 +36,7 @@ class _CarouselState extends State<Carousel> {
         if (snapshot.hasError)
           return errorCarousel(widget.size, widget.refreshCarousel);
         if (snapshot.hasData) {
-          var data = snapshot.data.results;
+          var data = snapshot.data?.results;
 
           return listBuilder(data, widget.size);
           // return Container();s
@@ -55,7 +55,7 @@ class _CarouselState extends State<Carousel> {
         return cardCarousel(data, index, size);
       },
       options: CarouselOptions(
-          height: size.height * 0.2,
+          height: size.height * 0.23,
           autoPlay: true,
           initialPage: 0,
           // enlargeCenterPage: true,
@@ -69,11 +69,13 @@ class _CarouselState extends State<Carousel> {
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: InkWell(
         onTap: () {
-          Get.to(Detail(
-            images: data[index].image,
-            slug: data[index].id,
-            type: data[index].type,
-          ));
+          Get.to(
+            Detail(
+              images: data[index].image,
+              slug: data[index].id,
+              type: data[index].type,
+            ),
+          );
         },
         child: Container(
           height: size.height,
@@ -168,19 +170,20 @@ class _CarouselState extends State<Carousel> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                    padding: const EdgeInsets.all(13.0),
-                    child: Column(
-                      children: [
-                        Text("No Connection"),
-                        ElevatedButton(
-                          onPressed: refresh,
-                          child: Text("Retry"),
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(kFavIconColor)),
-                        )
-                      ],
-                    )),
+                  padding: const EdgeInsets.all(13.0),
+                  child: Column(
+                    children: [
+                      Text("No Connection"),
+                      ElevatedButton(
+                        onPressed: refresh,
+                        child: Text("Retry"),
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(kFavIconColor)),
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
             width: size.width,

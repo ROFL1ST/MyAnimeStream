@@ -2,7 +2,7 @@
     package="com.example.my_anime_stream">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="my_anime_stream"
+        android:label="MyNime"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">

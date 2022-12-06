@@ -22,6 +22,14 @@ class FavoritePages extends StatefulWidget {
 
 class _FavoritePagesState extends State<FavoritePages> {
   final FavoriteManager favoriteManager = Get.put(FavoriteManager());
+
+  @override
+  void initState() {
+    favoriteManager.loadFavoriteFromDatabase();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -45,23 +53,26 @@ class _FavoritePagesState extends State<FavoritePages> {
           future: favoriteManager.loadFavoriteFromDatabase(),
           builder: (context, AsyncSnapshot snapshot) =>
               GetBuilder<FavoriteManager>(
-            builder: (_) => Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: favoriteManager.favorites.length != 0
-                    ? ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: favoriteManager.favorites.length,
-                        itemBuilder: (context, index) {
-                          return card(
-                              favoriteManager.favorites[index], size, index);
-                        },
-                      )
-                    : const Center(
-                        child: Text(
-                          "No Favorite Yet",
-                          style: kSubtitleDetailStyle,
-                        ),
-                      )),
+            builder: (_) => favoriteManager.favorites.isNotEmpty
+                ? Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: favoriteManager.favorites.length,
+                      itemBuilder: (context, index) {
+                        return card(
+                            favoriteManager.favorites[index], size, index);
+                      },
+                    ))
+                : Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: const Center(
+                      child: Text(
+                        "No Favorite Yet",
+                        style: kSubtitleDetailStyle,
+                      ),
+                    ),
+                  ),
           ),
         ),
       ),
@@ -87,8 +98,7 @@ class _FavoritePagesState extends State<FavoritePages> {
             label: 'Delete',
             icon: Icons.delete,
             foregroundColor: Colors.redAccent,
-                     backgroundColor: cardBg,
-
+            backgroundColor: cardBg,
           ),
         ],
 
@@ -123,13 +133,15 @@ class _FavoritePagesState extends State<FavoritePages> {
             children: [
               Row(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Image.network(
-                      data.image,
-                      height: size.height * 0.1,
-                      width: size.width * 0.2,
-                      fit: BoxFit.fill,
+                  SizedBox(
+                    height: size.height * 0.1,
+                    width: size.width * 0.2,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: NetworkImageWithCacheManager(
+                        imageUrl: data.image,
+                        key: UniqueKey(),
+                      ),
                     ),
                   ),
                   SizedBox(

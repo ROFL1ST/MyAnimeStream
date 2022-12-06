@@ -61,7 +61,6 @@ class _ListEpisodeState extends State<ListEpisode> {
                   ? remainingEp
                   : 30);
           finalChipCount = totalChipCount + (hasRemainingEp ? 1 : 0);
-          print('Ep Chunk List ${epChunkList.length}+ $remainingEp');
           return Column(
             children: [
               Padding(
@@ -166,7 +165,8 @@ class _ListEpisodeState extends State<ListEpisode> {
                                             title: snapshot.data.title.romaji,
                                             image: snapshot.data.image,
                                             createAt: now.toString(),
-                                            type: snapshot.data.type, imageEps: epChunkList[index].image,
+                                            type: snapshot.data.type,
+                                            imageEps: epChunkList[index].image,
                                           );
                                           // log("${history.currentEp}");
                                           if (historyManager.epsIdList.contains(
@@ -352,22 +352,69 @@ class _ListEpisodeState extends State<ListEpisode> {
           ],
         ),
         SizedBox(
-          height: size.height * 0.2,
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 20,
-              maxCrossAxisExtent: 50,
-            ),
-            physics: BouncingScrollPhysics(),
-            shrinkWrap: true,
-            // scrollDirection: Axis.horizontal,
-            itemCount: 12,
+          height: size.height * 0.5,
+          child: ListView.builder(
+            itemCount: 10,
+            physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              // return episodeCard(epChunkList[index], size, index,
-              //     snapshot.data.episodes, snapshot.data);
-
-              return episodeLoading(size);
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10.0),
+                child: Container(
+                  width: size.width,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: cardBg,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: cardBg,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(35),
+                            ),
+                          ),
+                          SizedBox(
+                            width: size.width * 0.03,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: cardBg,
+                                ),
+                                height: size.height * 0.015,
+                                width: size.width * 0.4,
+                              ),
+                              SizedBox(
+                                height: size.height * 0.02,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: cardBg,
+                                ),
+                                height: size.height * 0.015,
+                                width: size.width * 0.3,
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              );
             },
           ),
         ),

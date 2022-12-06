@@ -9,7 +9,8 @@ class Isi extends StatefulWidget {
   final detail;
   final size;
 
-  const Isi({super.key, required this.detail, required this.size});
+
+  const Isi({super.key, required this.detail, required this.size,});
 
   @override
   State<Isi> createState() => _IsiState();
@@ -132,15 +133,20 @@ class _IsiState extends State<Isi> {
                       ),
                       !isOpen
                           ? AutoSizeText(
-                              _parseHtmlString(snapshot.data.description),
+                              _parseHtmlString(snapshot.data.description.toString()),
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 12),
                             )
-                          : AutoSizeText(
-                              _parseHtmlString(snapshot.data.description),
-                              style: TextStyle(fontSize: 12),
-                            )
+                          : Column(
+                            children: [
+                              AutoSizeText(
+                                  _parseHtmlString(snapshot.data.description.toString()),
+                                  style: TextStyle(fontSize: 12),
+                                ),
+
+                            ],
+                          )
                     ],
                   ),
                 ),

@@ -9,6 +9,7 @@ const kListSubtitleColor = Color(0xFF494949);
 const kFavIconColor = Color(0xFFF24E1E);
 Color kCloseIcon = Color(0xFF000000).withOpacity(0.7);
 const kDarkBlue = Color(0xFF0D1321);
+const kCardColorDark = Color(0xFF252A34);
 // style
 
 const kTitleBannerStyle = TextStyle(

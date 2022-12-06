@@ -169,7 +169,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                               child: Text("Down"),
                             )
                           : videoPlayer(
-                              snapshot.data.headers.referer, orientation);
+                              snapshot.data?.headers.referer, orientation);
                     return Text("Kosong");
                   },
                   future: eps,
@@ -208,7 +208,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
                                   SizedBox(
                                     height: size.height * 0.023,
                                   ),
-                                  Isi(detail: widget.detail, size: size),
+                                  Isi(
+                                    detail: widget.detail,
+                                    size: size,
+                                  ),
                                   SizedBox(
                                     height: size.height * 0.023,
                                   ),
@@ -399,7 +402,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
                             title: data.title.romaji,
                             image: data.image,
                             createAt: now.toString(),
-                            type: data.type, imageEps: data.episodes[index].image,
+                            type: data.type,
+                            imageEps: data.episodes[index].image,
                           );
                           if (historyManager.epsIdList
                               .contains(data.episodes[index].id)) {
@@ -504,7 +508,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
                             title: data.title.romaji,
                             image: data.image,
                             createAt: now.toString(),
-                            type: data.type, imageEps: data.episodes[index].image,
+                            type: data.type,
+                            imageEps: data.episodes[index].image,
                           );
                           if (historyManager.epsIdList
                               .contains(data.episodes[index].id)) {
@@ -729,7 +734,11 @@ class _WebViewScreenState extends State<WebViewScreen> {
     if (widget.slug != data.id) {
       return InkWell(
         onTap: () {
-          Get.off(Detail(images: data.image, slug: data.id, type: data.type,));
+          Get.off(Detail(
+            images: data.image,
+            slug: data.id,
+            type: data.type,
+          ));
         },
         child: Container(
           width: size.width,

@@ -65,7 +65,7 @@ class _RecentState extends State<Recent> {
               return listLoading(widget.size);
             if (snapshot.hasError) return error(widget.size);
             if (snapshot.hasData) {
-              var data = snapshot.data.results;
+              var data = snapshot.data?.results;
               return listBuilder(data, widget.size);
             } else {
               return Text("Kosong");
@@ -135,6 +135,7 @@ class _RecentState extends State<Recent> {
           height: size.height * 0.04,
           decoration: BoxDecoration(
               color: cardBg,
+              // ignore: prefer_const_constructors
               borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Padding(
             padding: const EdgeInsets.only(bottom: 5),

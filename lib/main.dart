@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/pages/home/homeScreen.dart';
-
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 void main() async {
   await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();

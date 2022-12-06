@@ -73,7 +73,7 @@ class _SearchState extends State<Search> {
           width: size.width * 0.7,
           // height: size.height * 0.05,
           decoration: BoxDecoration(
-            color: cardBg,
+            // color: cardBg,
             borderRadius: BorderRadius.circular(29),
           ),
           child: TextField(

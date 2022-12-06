@@ -18,7 +18,7 @@ class ApiService {
   String base_url = "https://api.consumet.org/meta/anilist/";
   String top_airing = "trending";
   String popular_anime = "popular";
-  String recent_episodes = "recent-episodes?perPage=16";
+  String recent_episodes = "recent-episodes";
   String detail_anime = "info";
   String episode_url = "watch";
   String genre_selected = "genre";
@@ -55,14 +55,16 @@ class ApiService {
   }
 
   Future recent(page) async {
-    Uri urlApi = Uri.parse(base_url + recent_episodes + "?page=$page");
+    Uri urlApi = Uri.parse(base_url + recent_episodes + "?page=$page&perPage=16");
+
+
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
     };
 
     final res = await http.get(urlApi, headers: requestHeaders);
-
+    log("$urlApi");
     if (res.statusCode == 200) {
       return recentAnimeFromJson(res.body.toString());
     } else {

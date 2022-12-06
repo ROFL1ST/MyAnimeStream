@@ -18,9 +18,6 @@ class FavoriteManager extends GetxController {
       for (var favorite in _list) {
         _idList.add(favorite.id);
       }
-    } else {
-      _list = [];
-      _idList = [];
     }
   }
 

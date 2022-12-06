@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors
-
 import 'dart:developer';
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -95,7 +94,9 @@ class _ContinueState extends State<Continue> {
             currentEp: data.currentEp,
             title: data.title,
             image: data.image,
-            createAt: now.toString(), type: data.type, imageEps: data.imageEps,
+            createAt: now.toString(),
+            type: data.type,
+            imageEps: data.imageEps,
           );
           if (historyManager.epsIdList.contains(data.episodeId)) {
             historyManager.removeHistory(data.episodeId);
@@ -154,26 +155,58 @@ class _ContinueState extends State<Continue> {
                             //     )
                             //   ],
                             // ),
+                            // Padding(
+                            //   padding: const EdgeInsets.all(5.0),
+                            //   child: Column(
+                            //     crossAxisAlignment: CrossAxisAlignment.start,
+                            //     children: [
+                            //       Row(
+                            //         mainAxisAlignment: MainAxisAlignment.end,
+                            //         children: [
+                            //           InkWell(
+                            //             onTap: () {
+                            //               continueManager
+                            //                   .removeContinue(data.id);
+                            //               Get.snackbar(data.title,
+                            //                   "${data.title} removed from Continue Watching",
+                            //                   backgroundColor: Colors.black38,
+                            //                   duration: const Duration(
+                            //                       milliseconds: 1300),
+                            //                   snackPosition:
+                            //                       SnackPosition.BOTTOM);
+                            //             },
+                            //             child: Icon(
+                            //               Icons.remove_circle_outline,
+                            //               size: size.width * 0.05,
+                            //             ),
+                            //           )
+                            //         ],
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
                             Container(
-                                  height: size.height * 0.03,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    gradient: LinearGradient(
-                                      begin: FractionalOffset.topCenter,
-                                      end: FractionalOffset.bottomCenter,
-                                      colors: [
-                                        Colors.transparent,
-                                        bg,
-                                      ],
-                                      stops: [0.0, 1.0],
-                                    ),
-                                  ),
+                              height: size.height * 0.03,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                    bottomRight: Radius.circular(10),
+                                    bottomLeft: Radius.circular(10)),
+                                gradient: LinearGradient(
+                                  begin: FractionalOffset.topCenter,
+                                  end: FractionalOffset.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    bg,
+                                  ],
+                                  stops: [0.0, 1.0],
                                 ),
+                              ),
+                            ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                
                                 Padding(
                                   padding: const EdgeInsets.all(10.0),
                                   child: SizedBox(
@@ -181,7 +214,8 @@ class _ContinueState extends State<Continue> {
                                       child: AutoSizeText(
                                         data.title,
                                         maxLines: 1,
-                                         style: kTitleBannerStyle.copyWith(fontSize: 14),
+                                        style: kTitleBannerStyle.copyWith(
+                                            fontSize: 14),
                                         overflow: TextOverflow.clip,
                                       )),
                                 )
@@ -205,7 +239,9 @@ class _ContinueState extends State<Continue> {
                       SizedBox(
                         width: size.width * 0.3,
                         child: AutoSizeText(
-                          data.type == "MOVIE" ? "Movies" : "Episode ${int.parse(data.currentEp) + 1}",
+                          data.type == "MOVIE"
+                              ? "Movies"
+                              : "Episode ${int.parse(data.currentEp) + 1}",
                           minFontSize: 5,
                           maxLines: 1,
                           style: kTitleTextStyle.copyWith(fontSize: 14),

@@ -55,10 +55,24 @@ dependencies:
   floating: ^1.1.1+1
   timeago: ^3.3.0
   youtube_player_flutter: ^8.1.1
+  flutter_native_splash: ^2.2.16
+  url_launcher: ^6.0.20
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  flutter_launcher_name:
+    git:
+      url: https://github.com/ride4sun/flutter_launcher_name
+      ref: "0.9.1"
+
+flutter_native_splash:
+  image: "assets/images/MyAnimeStream.png"
+  color: "#181920"
+
+flutter_launcher_name:
+  name: "MyNime"
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

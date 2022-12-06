@@ -72,9 +72,10 @@ class _HistoryPagesState extends State<HistoryPages> {
                           SlidableAction(
                             onPressed: (BuildContext context) {
                               historyManager.removeHistory(
-                                historyManager.animeList[index].id,
+                                historyManager.animeList[index].episodeId,
                               );
-                             
+                              continueManager.removeContinue(
+                                  historyManager.animeList[index].id);
                             },
                             label: 'Delete',
                             icon: Icons.delete,
@@ -87,7 +88,6 @@ class _HistoryPagesState extends State<HistoryPages> {
                             historyManager.removeHistory(
                               historyManager.animeList[index].episodeId,
                             );
-                            
                           },
                         ),
                       ),
@@ -176,10 +176,11 @@ class _HistoryPagesState extends State<HistoryPages> {
                 id: data.id,
                 episodeId: data.episodeId,
                 currentEp: data.currentEp,
-               
                 title: data.title,
                 image: data.image,
-                createAt: now.toString(), type: data.type, imageEps: data.imageEps,
+                createAt: now.toString(),
+                type: data.type,
+                imageEps: data.imageEps,
               );
               if (historyManager.epsIdList.contains(data.episodeId)) {
                 historyManager.removeHistory(data.episodeId);
@@ -194,8 +195,7 @@ class _HistoryPagesState extends State<HistoryPages> {
                   detail: ApiService().detail(data.id),
                   currentIndex: int.parse(data.currentEp),
                   prevPage: "Home",
-              image: data.image,
-
+                  image: data.image,
                 ),
               );
             },

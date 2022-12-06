@@ -1,4 +1,4 @@
-// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: curly_braces_in_flow_control_structures, prefer_const_constructors
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +10,7 @@ import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/helpers/favoriteManager.dart';
 import 'package:my_anime_stream/pages/detail/detail.dart';
 import 'package:my_anime_stream/pages/favorite/favoritePages.dart';
+import 'package:my_anime_stream/pages/home/components/cache_image_with_cachemanager.dart';
 
 class Favorite extends StatefulWidget {
   final size;
@@ -53,18 +54,35 @@ class _FavoriteState extends State<Favorite> {
   }
 
   Widget listBuilder(size) {
+    // final List<Widget> _fav = List.generate(5, (i) {
+    //   return card(favoriteManager.favorites[i], size, i);
+    // });
     return Container(
-      margin: EdgeInsets.only(top: size.height * 0.01),
-      // height: favoriteManager.favorites.length * 110,
-      width: size.width,
-      child: Column(
-          children: favoriteManager.favorites.length != 0
-              ? favoriteManager.favorites
-                  .asMap()
-                  .entries
-                  .map((e) => card(e.value, size, e.key))
-                  .toList()
-              : [
+        margin: EdgeInsets.only(
+          top: size.height * 0.01,
+          bottom: size.height * 0.01,
+        ),
+        // height: favoriteManager.favorites.length * 110,
+        width: size.width,
+        child: favoriteManager.favorites.length != 0
+            ? Column(
+                children: [
+                  // ..._fav
+                  //     .asMap()
+                  //     .entries
+                  //     .map((e) => card(e.value, size, e.key)),
+                  ...favoriteManager.favorites
+                      .asMap()
+                      .entries
+                      .map((e) => card(e.value, size, e.key))
+                      .toList(),
+                  favoriteManager.favorites.length <= 5
+                      ? moreCard(size)
+                      : SizedBox()
+                ],
+              )
+            : Column(
+                children: [
                   const Padding(
                     padding: EdgeInsets.all(80.0),
                     child: Center(
@@ -74,8 +92,8 @@ class _FavoriteState extends State<Favorite> {
                       ),
                     ),
                   )
-                ]),
-    );
+                ],
+              ));
   }
 
   Widget card(data, size, index) {
@@ -124,7 +142,6 @@ class _FavoriteState extends State<Favorite> {
           );
         },
         child: Container(
-        
           width: size.width,
           height: size.height * 0.12,
           child: Row(
@@ -133,13 +150,15 @@ class _FavoriteState extends State<Favorite> {
             children: [
               Row(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Image.network(
-                      data.image,
-                      height: size.height * 0.1,
-                      width: size.width * 0.2,
-                      fit: BoxFit.fill,
+                  SizedBox(
+                    height: size.height * 0.1,
+                    width: size.width * 0.2,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: NetworkImageWithCacheManager(
+                        key: UniqueKey(),
+                        imageUrl: data.image,
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -195,6 +214,48 @@ class _FavoriteState extends State<Favorite> {
                   color: kFavIconColor,
                 ),
               )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget moreCard(size) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0, top: 8),
+      child: InkWell(
+        onTap: () {
+          Get.to(() => FavoritePages());
+        },
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              border: Border(
+                  bottom: BorderSide(
+                    color: kSubtitleColor,
+                  ),
+                  top: BorderSide(color: kSubtitleColor),
+                  left: BorderSide(color: kSubtitleColor),
+                  right: BorderSide(color: kSubtitleColor))),
+          width: size.width,
+          height: size.height * 0.12,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                "More To Favorites",
+                style: kSubtitleDetailStyle,
+              ),
+              SizedBox(
+                width: size.width * 0.01,
+              ),
+              Icon(
+                Iconsax.arrow_circle_right,
+                color: kSubtitleColor,
+                size: size.width * 0.05,
+              ),
             ],
           ),
         ),
