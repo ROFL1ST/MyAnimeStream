@@ -71,12 +71,19 @@ class _FavoriteState extends State<Favorite> {
                   //     .asMap()
                   //     .entries
                   //     .map((e) => card(e.value, size, e.key)),
-                  ...favoriteManager.favorites
-                      .asMap()
-                      .entries
-                      .map((e) => card(e.value, size, e.key))
-                      .toList(),
-                  favoriteManager.favorites.length <= 5
+                  // ...favoriteManager.favorites
+                  //     .asMap()
+                  //     .entries
+                  //     .map((e) => card(e.value, size, e.key))
+                  //     .toList(),
+
+                  ...List.generate(
+                      favoriteManager.favorites.length > 5
+                          ? 5
+                          : favoriteManager.favorites.length, (i) {
+                    return card(favoriteManager.favorites[i], size, i);
+                  }),
+                  favoriteManager.favorites.length > 5
                       ? moreCard(size)
                       : SizedBox()
                 ],

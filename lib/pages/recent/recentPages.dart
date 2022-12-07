@@ -225,7 +225,7 @@ class _RecentPagesState extends State<RecentPages> {
             WebViewScreen(
               slug: data.episodeId,
               detail: ApiService().detail(data.id),
-              currentIndex: data.episodeNumber - 1,
+              currentIndex: (data.episodeNumber - 1).toString(),
               prevPage: "Home",
               image: data.image,
             ),

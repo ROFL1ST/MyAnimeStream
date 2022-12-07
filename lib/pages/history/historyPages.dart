@@ -193,7 +193,7 @@ class _HistoryPagesState extends State<HistoryPages> {
                 WebViewScreen(
                   slug: data.episodeId,
                   detail: ApiService().detail(data.id),
-                  currentIndex: int.parse(data.currentEp),
+                  currentIndex: data.currentEp,
                   prevPage: "Home",
                   image: data.image,
                 ),

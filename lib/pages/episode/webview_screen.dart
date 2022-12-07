@@ -99,23 +99,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    _scrollController?.dispose();
-    floating.dispose();
     super.dispose();
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState lifecycleState) {
-    if (lifecycleState == AppLifecycleState.inactive) {
-      floating.enable(Rational.square());
-    }
-  }
-
-  Future<void> enablePip() async {
-    final status = await floating.enable(Rational.landscape());
-    debugPrint('PiP enabled? $status');
-  }
-
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     // takoDebugPrint(Get.arguments['mediaUrl'].toString());

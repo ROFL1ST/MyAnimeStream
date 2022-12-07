@@ -26,7 +26,7 @@ class About extends StatelessWidget {
       body: ListView(children: [
         ListTile(
           title: Text("Version"),
-          subtitle: Text("1.0.0 aniList-API"),
+          subtitle: Text("1.1.0 aniList-API"),
         ),
         ListTile(
           onTap: () {

@@ -9,8 +9,11 @@ class Isi extends StatefulWidget {
   final detail;
   final size;
 
-
-  const Isi({super.key, required this.detail, required this.size,});
+  const Isi({
+    super.key,
+    required this.detail,
+    required this.size,
+  });
 
   @override
   State<Isi> createState() => _IsiState();
@@ -131,20 +134,28 @@ class _IsiState extends State<Isi> {
                       SizedBox(
                         height: size.height * 0.01,
                       ),
-                      !isOpen
-                          ? AutoSizeText(
-                              _parseHtmlString(snapshot.data.description.toString()),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 12),
-                            )
-                          : Column(
-                            children: [
-                              AutoSizeText(
-                                  _parseHtmlString(snapshot.data.description.toString()),
+                      snapshot.data.description != null
+                          ? !isOpen
+                              ? AutoSizeText(
+                                  _parseHtmlString(
+                                      snapshot.data.description.toString()),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  // textAlign: TextAlign.start,
                                   style: TextStyle(fontSize: 12),
-                                ),
-
+                                )
+                              : Column(
+                                  children: [
+                                    AutoSizeText(
+                                      _parseHtmlString(
+                                          snapshot.data.description.toString()),
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ],
+                                )
+                          : Row(
+                            children: [
+                              Text("No Desc"),
                             ],
                           )
                     ],

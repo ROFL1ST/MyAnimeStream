@@ -197,11 +197,6 @@ class _ListEpisodeState extends State<ListEpisode> {
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            color: historyManager.epsIdList
-                                                    .contains(
-                                                        epChunkList[index].id)
-                                                ? cardBg.withOpacity(0.03)
-                                                : cardBg,
                                           ),
                                           child: Row(
                                             mainAxisAlignment:
@@ -213,17 +208,28 @@ class _ListEpisodeState extends State<ListEpisode> {
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             10),
-                                                    child: CachedNetworkImage(
-                                                      imageUrl:
-                                                          epChunkList[index]
-                                                              .image,
-                                                      key: UniqueKey(),
-                                                      cacheManager:
-                                                          CustomCacheManager
-                                                              .instance,
-                                                      height: size.height * 0.1,
-                                                      width: size.width * 0.3,
-                                                      fit: BoxFit.cover,
+                                                    child: Opacity(
+                                                      opacity: historyManager
+                                                              .epsIdList
+                                                              .contains(
+                                                                  epChunkList[
+                                                                          index]
+                                                                      .id)
+                                                          ? 0.3
+                                                          : 1,
+                                                      child: CachedNetworkImage(
+                                                        imageUrl:
+                                                            epChunkList[index]
+                                                                .image,
+                                                        key: UniqueKey(),
+                                                        cacheManager:
+                                                            CustomCacheManager
+                                                                .instance,
+                                                        height:
+                                                            size.height * 0.1,
+                                                        width: size.width * 0.3,
+                                                        fit: BoxFit.cover,
+                                                      ),
                                                     ),
                                                   ),
                                                   SizedBox(
@@ -315,9 +321,14 @@ class _ListEpisodeState extends State<ListEpisode> {
                       ))
                   : Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        'Coming Soon ..',
-                        style: kSubtitleDetailStyle,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Coming Soon ..',
+                            style: kSubtitleDetailStyle,
+                          ),
+                        ],
                       ),
                     ),
             ],
@@ -363,7 +374,7 @@ class _ListEpisodeState extends State<ListEpisode> {
                   width: size.width,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: cardBg,
+                    
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

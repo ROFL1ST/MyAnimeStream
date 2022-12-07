@@ -48,15 +48,21 @@ class ApiService {
     final res = await http.get(urlApi, headers: requestHeaders);
 
     if (res.statusCode == 200) {
-      return topFromJson(res.body.toString());
+      var data = jsonDecode(res.body);
+
+      if (data["results"] != null) {
+        return topFromJson(res.body.toString());
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
   }
 
   Future recent(page) async {
-    Uri urlApi = Uri.parse(base_url + recent_episodes + "?page=$page&perPage=16");
-
+    Uri urlApi =
+        Uri.parse(base_url + recent_episodes + "?page=$page&perPage=16");
 
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
@@ -123,18 +129,22 @@ class ApiService {
 
   Future genre(genre, page) async {
     final list = [];
-   list.add(genre);
-    Uri urlApi = Uri.parse(base_url + genre_selected + "?genres=" + "['$genre']", );
+    list.add(genre);
+    Uri urlApi = Uri.parse(
+      base_url + genre_selected + "?genres=" + "['$genre']",
+    );
     String url = (base_url + genre_selected + "?genres=" + "['$genre']");
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
     };
 
-   
-   log("$list, $urlApi");
+    log("$list, $urlApi");
 
-    final res = await http.get(urlApi, headers: requestHeaders,);
+    final res = await http.get(
+      urlApi,
+      headers: requestHeaders,
+    );
     if (res.statusCode == 200) {
       return genreSelectFromJson(res.body.toString());
     } else {

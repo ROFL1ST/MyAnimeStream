@@ -78,55 +78,60 @@ class _CharactersBuilderState extends State<CharactersBuilder> {
                       });
                 if (snapshot.hasError) return Text("Error");
                 if (snapshot.hasData) {
-                  return ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: snapshot.data.characters.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                            // bottom: 6,
+                  return snapshot.data.characters.length != 0
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: snapshot.data.characters.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                // bottom: 6,
 
-                            right: 18,
-                          ),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: size.height * 0.09,
-                                width: size.width * 0.2,
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(105),
-                                    child: CachedNetworkImage(
-                                      imageUrl:
-                                          snapshot.data.characters[index].image,
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) => Container(
-                                        height: size.height * 0.09,
-                                        width: size.width * 0.2,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(100),
-                                            color: cardBg),
-                                        child:
-                                            Padding(padding: EdgeInsets.all(8)),
-                                      ),
-                                    )),
+                                right: 18,
                               ),
-                              SizedBox(
-                                width: size.width * 0.14,
-                                child: AutoSizeText(
-                                  snapshot.data.characters[index].name.full ??
-                                      "",
-                                  maxLines: 1,
-                                  maxFontSize: 16,
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      });
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: size.height * 0.09,
+                                    width: size.width * 0.2,
+                                    child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(105),
+                                        child: CachedNetworkImage(
+                                          imageUrl: snapshot
+                                              .data.characters[index].image,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              Container(
+                                            height: size.height * 0.09,
+                                            width: size.width * 0.2,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                                color: cardBg),
+                                            child: Padding(
+                                                padding: EdgeInsets.all(8)),
+                                          ),
+                                        )),
+                                  ),
+                                  SizedBox(
+                                    width: size.width * 0.14,
+                                    child: AutoSizeText(
+                                      snapshot.data.characters[index].name
+                                              .full ??
+                                          "",
+                                      maxLines: 1,
+                                      maxFontSize: 16,
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                          })
+                      : Text("No Characters");
                 } else {
                   return Text("Kosong");
                 }
