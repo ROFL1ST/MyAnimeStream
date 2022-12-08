@@ -20,6 +20,25 @@ App for streaming anime for free and no Ads
 - Continue Watch
 - Search Anime
 
+## Clone Repo
+
+Open Your `Terminal` and `Paste`
+
+```bash
+$ git clone https://github.com/kaungsatthe1n/Tako-Play.git
+```
+
+
+## Build Setup
+
+```bash
+
+# install dependencies
+
+$ flutter pub get
+```
+
+
 ## Enjoy 😊
 
 Enjoy And Joyful
