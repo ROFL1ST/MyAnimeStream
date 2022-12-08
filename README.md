@@ -21,3 +21,6 @@ App for streaming anime for free and no Ads
 - Continue Watch
 - Search Anime
 
+## Enjoy 😊
+
+Enjoy And Joyful
