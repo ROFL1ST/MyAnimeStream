@@ -20,14 +20,16 @@ class DevCard extends StatelessWidget {
             color: kCardColorDark,
             elevation: 2,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(32),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(height: size.height * 0.01,),
+                  SizedBox(
+                    height: size.height * 0.01,
+                  ),
                   SizedBox(
                     width: size.width * 0.6,
                     child: AutoSizeText(
@@ -41,7 +43,6 @@ class DevCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
-                        
                           onPressed: () {
                             Navigator.pop(context);
                           },

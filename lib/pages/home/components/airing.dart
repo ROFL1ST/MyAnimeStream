@@ -1,10 +1,15 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/helpers/cache_manager.dart';
+import 'package:my_anime_stream/helpers/hero_dialogue_route.dart';
 import 'package:my_anime_stream/pages/detail/detail.dart';
+import 'package:my_anime_stream/pages/home/components/cache_image_with_cachemanager.dart';
+import 'package:my_anime_stream/pages/home/components/cardDialogue.dart';
+import 'package:my_anime_stream/pages/top/topPages.dart';
 
 class Airing extends StatefulWidget {
   final size;
@@ -33,6 +38,14 @@ class _AiringState extends State<Airing> {
               "Top Airing",
               style: kTitleTextStyle,
             ),
+            IconButton(
+              onPressed: () {
+                Get.to(
+                  TopPages(),
+                );
+              },
+              icon: Icon(Iconsax.arrow_circle_right),
+            )
           ],
         ),
         FutureBuilder(
@@ -72,6 +85,15 @@ class _AiringState extends State<Airing> {
 
   Widget card(data, size) {
     return InkWell(
+      onLongPress: () {
+        Navigator.of(context).push(HeroDialogRoute(builder: (context) {
+          return CardDialogue(
+            data: data,
+            size: size,
+            from: 1,
+          );
+        }));
+      },
       onTap: () {
         Get.to(Detail(
           images: data.image,

@@ -31,6 +31,7 @@ class _SearchState extends State<Search> {
   bool hasNoMoreResult = false;
 
   var hasValue = false.obs;
+  var onInput = false.obs;
 
   @override
   void initState() {
@@ -76,35 +77,42 @@ class _SearchState extends State<Search> {
             // color: cardBg,
             borderRadius: BorderRadius.circular(29),
           ),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              fillColor: cardBg,
-              prefixIcon: const Icon(
-                Icons.search,
-                color: Colors.white,
-              ),
-              suffixIcon: IconButton(
-                icon: const Icon(
-                  Icons.clear,
+          child: Focus(
+            onFocusChange: (val) {
+              if (val) {
+                onInput.value = true;
+              }
+            },
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                fillColor: cardBg,
+                prefixIcon: const Icon(
+                  Icons.search,
                   color: Colors.white,
                 ),
-                onPressed: () {
-                  _searchController.clear();
-                  hasValue.value = false;
-                },
+                suffixIcon: IconButton(
+                  icon: const Icon(
+                    Icons.clear,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    _searchController.clear();
+                    hasValue.value = false;
+                  },
+                ),
+                hintText: 'Search...',
+                border: InputBorder.none,
+                // contentPadding: EdgeInsets.all(20),
               ),
-              hintText: 'Search...',
-              border: InputBorder.none,
-              // contentPadding: EdgeInsets.all(20),
+              onSubmitted: (val) {
+                _saveToRecentSearches(val);
+                result = ApiService().search(title.value, _pageIndex);
+                _pageIndex = 1;
+                hasValue.value = true;
+                title.value = val;
+              },
             ),
-            onSubmitted: (val) {
-              _saveToRecentSearches(val);
-              result = ApiService().search(title.value, _pageIndex);
-              _pageIndex = 1;
-              hasValue.value = true;
-              title.value = val;
-            },
           ),
         ),
         backgroundColor: Colors.transparent,
@@ -467,62 +475,164 @@ class _SearchState extends State<Search> {
                   }
                 },
               )
-            : FutureBuilder<List<String>>(
-                future: _getRecentSearches(),
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done)
-                    return Center(child: Text(""));
-                  if (snapshot.hasError) return Text("");
-                  if (snapshot.hasData)
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListView.builder(
-                          physics: BouncingScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              key: Key(index.toString()),
-                              title: Text(
-                                snapshot.data[index],
-                                style: kSubtitleDetailStyle,
-                              ),
-                              trailing: IconButton(
-                                onPressed: () {
-                                  _deleteSearch(snapshot.data[index]);
-                                  setState(() {});
-                                },
-                                icon: const Icon(
-                                  Icons.close,
-                                  color: kSubtitleColor,
-                                ),
-                              ),
-                              onTap: () {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                setState(() {
-                                  title.value = snapshot.data[index];
-                                  _searchController.text = title.value;
-                                  _pageIndex = 1;
-
-                                  result = ApiService()
-                                      .search(title.value, _pageIndex);
-
-                                  hasValue.value = true;
-                                });
-                              },
+            : Obx(() {
+                return !onInput.value
+                    ? FutureBuilder(
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.connectionState != ConnectionState.done)
+                            return Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Loading(),
                             );
-                          }),
-                    );
-                  return Center(
-                    child: Text(
-                      "You Haven't Searched Yet !",
-                      style: kSubtitleTextStyle,
-                    ),
-                  );
-                },
-              );
+                          if (snapshot.hasError) return Text("Error");
+                          if (snapshot.hasData) {
+                            return Padding(
+                              padding: EdgeInsets.all(15),
+                              child: topBuilder(snapshot.data.results, size),
+                            );
+                          } else {
+                            return Text("Kosong");
+                          }
+                        },
+                        future: ApiService().popular(),
+                      )
+                    : FutureBuilder<List<String>>(
+                        future: _getRecentSearches(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.connectionState != ConnectionState.done)
+                            return Center(child: Text(""));
+                          if (snapshot.hasError) return Text("");
+                          if (snapshot.hasData)
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListView.builder(
+                                  physics: BouncingScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      key: Key(index.toString()),
+                                      title: Text(
+                                        snapshot.data[index],
+                                        style: kSubtitleDetailStyle,
+                                      ),
+                                      trailing: IconButton(
+                                        onPressed: () {
+                                          _deleteSearch(snapshot.data[index]);
+                                          setState(() {});
+                                        },
+                                        icon: const Icon(
+                                          Icons.close,
+                                          color: kSubtitleColor,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
+                                        setState(() {
+                                          title.value = snapshot.data[index];
+                                          _searchController.text = title.value;
+                                          _pageIndex = 1;
+
+                                          result = ApiService()
+                                              .search(title.value, _pageIndex);
+
+                                          hasValue.value = true;
+                                        });
+                                      },
+                                    );
+                                  }),
+                            );
+                          return Center(
+                            child: Text(
+                              "You Haven't Searched Yet !",
+                              style: kSubtitleTextStyle,
+                            ),
+                          );
+                        },
+                      );
+              });
       }),
     );
+  }
+
+  Widget topBuilder(data, size) {
+    return Container(
+      width: size.width,
+      child: GridView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: data.length,
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            childAspectRatio: .56,
+            crossAxisSpacing: 30,
+            mainAxisSpacing: 40,
+            maxCrossAxisExtent: 220,
+          ),
+          itemBuilder: (context, index) {
+            return card(data[index], size);
+          }),
+    );
+  }
+
+  Widget card(data, size) {
+    return InkWell(
+        onTap: () {
+          Get.to(Detail(
+            images: data.image,
+            slug: data.id,
+            type: data.type,
+          ));
+        },
+        child: Container(
+          child: Column(
+            children: [
+              Expanded(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: NetworkImageWithCacheManager(
+                        imageUrl: data.image,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Column(
+                    children: [
+                      AutoSizeText(
+                        data.title.romaji,
+                        maxLines: 1,
+                        textAlign: TextAlign.start,
+                        overflow: TextOverflow.ellipsis,
+                        style: kListTitleStyle,
+                      ),
+                      Text(
+                        "Released : ${data.releaseDate}",
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        style: kListSubtitle,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
+        // child: Container(
+        //   decoration: BoxDecoration(
+        //       borderRadius: BorderRadius.circular(10),
+        //       image: DecorationImage(
+        //           image: NetworkImage(data.image), fit: BoxFit.cover)),
+        // ),
+        );
   }
 
   Future<void> _saveToRecentSearches(searchText) async {

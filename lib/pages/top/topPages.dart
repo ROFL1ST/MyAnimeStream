@@ -5,22 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_anime_stream/API/apiService.dart';
 import 'package:my_anime_stream/common/colors.dart';
-import 'package:my_anime_stream/helpers/hero_dialogue_route.dart';
 import 'package:my_anime_stream/pages/detail/detail.dart';
 import 'package:my_anime_stream/pages/episode/webview_screen.dart';
 import 'package:my_anime_stream/pages/home/components/cache_image_with_cachemanager.dart';
-import 'package:my_anime_stream/pages/recent/component/cardDialogue.dart';
-
 import 'package:my_anime_stream/pages/search/component/resultLoading.dart';
 
-class RecentPages extends StatefulWidget {
-  const RecentPages({super.key});
+class TopPages extends StatefulWidget {
+  const TopPages({super.key});
 
   @override
-  State<RecentPages> createState() => _RecentPagesState();
+  State<TopPages> createState() => _TopPagesState();
 }
 
-class _RecentPagesState extends State<RecentPages> {
+class _TopPagesState extends State<TopPages> {
   int _pageIndex = 1;
   bool hasNoMoreResult = false;
 
@@ -32,7 +29,7 @@ class _RecentPagesState extends State<RecentPages> {
       backgroundColor: bg,
       appBar: AppBar(
         title: Text(
-          "Recent Update",
+          "Top Anime",
           style: kTitleDetailStyle,
         ),
         leading: IconButton(
@@ -46,14 +43,14 @@ class _RecentPagesState extends State<RecentPages> {
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            ApiService().recent(_pageIndex);
+            ApiService().top(_pageIndex);
           });
         },
         child: Column(
           children: [
             Expanded(
               child: FutureBuilder(
-                future: ApiService().recent(_pageIndex),
+                future: ApiService().top(_pageIndex),
                 builder: (context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
                     return Padding(
@@ -71,7 +68,7 @@ class _RecentPagesState extends State<RecentPages> {
                           ),
                           TextButton(
                             onPressed: () {
-                              ApiService().recent(_pageIndex);
+                              ApiService().top(_pageIndex);
                             },
                             child: Text("Retry"),
                             style: TextButton.styleFrom(
@@ -223,71 +220,61 @@ class _RecentPagesState extends State<RecentPages> {
 
   Widget card(data, size) {
     return InkWell(
-      onLongPress: () {
-        Navigator.of(context).push(HeroDialogRoute(builder: (context) {
-          return CardDialogue(
-            data: data,
-            size: size,
-            from: 2,
-          );
-        }));
-      },
         onTap: () {
-          Get.to(
-            WebViewScreen(
-              slug: data.episodeId,
-              detail: ApiService().detail(data.id),
-              currentIndex: (data.episodeNumber - 1).toString(),
-              prevPage: "Home",
-              image: data.image,
-            ),
-          );
-          // arah ke episode yg dituju
+          Get.to(Detail(
+            images: data.image,
+            slug: data.id,
+            type: data.type,
+          ));
         },
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                    color: cardBg,
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: Column(
+        child: Container(
+          child: Column(
+            children: [
+              Expanded(
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Container(
-                      height: size.height * 0.31,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: NetworkImageWithCacheManager(
-                                    imageUrl: data.image,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: Center(
-                        child: Text(
-                          "Episode ${data.episodeNumber.toString()}",
-                          style: kTitleTextStyle.copyWith(fontSize: 14),
-                        ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: NetworkImageWithCacheManager(
+                        imageUrl: data.image,
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            
-          ],
-        ));
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Column(
+                    children: [
+                      AutoSizeText(
+                        data.title.romaji,
+                        maxLines: 1,
+                        textAlign: TextAlign.start,
+                        overflow: TextOverflow.ellipsis,
+                        style: kListTitleStyle,
+                      ),
+                      Text(
+                        "Released : ${data.releaseDate}",
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        style: kListSubtitle,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
+        // child: Container(
+        //   decoration: BoxDecoration(
+        //       borderRadius: BorderRadius.circular(10),
+        //       image: DecorationImage(
+        //           image: NetworkImage(data.image), fit: BoxFit.cover)),
+        // ),
+        );
   }
 }

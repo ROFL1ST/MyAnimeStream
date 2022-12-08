@@ -9,10 +9,12 @@ import 'package:my_anime_stream/API/apiService.dart';
 import 'package:my_anime_stream/API/model/recent_anime.dart';
 import 'package:my_anime_stream/common/colors.dart';
 import 'package:my_anime_stream/helpers/cache_manager.dart';
+import 'package:my_anime_stream/helpers/hero_dialogue_route.dart';
 import 'package:my_anime_stream/helpers/historyManager.dart';
 import 'package:my_anime_stream/pages/detail/detail.dart';
 import 'package:my_anime_stream/pages/episode/webview_screen.dart';
 import 'package:my_anime_stream/pages/home/components/cache_image_with_cachemanager.dart';
+import 'package:my_anime_stream/pages/home/components/cardDialogue.dart';
 import 'package:my_anime_stream/pages/recent/recentPages.dart';
 
 class Recent extends StatefulWidget {
@@ -100,6 +102,15 @@ class _RecentState extends State<Recent> {
   Widget card(data, size) {
     return GetBuilder<HistoryManager>(
       builder: (_) => InkWell(
+        onLongPress: () {
+          Navigator.of(context).push(HeroDialogRoute(builder: (context) {
+          return CardDialogue(
+            data: data,
+            size: size,
+            from: 2,
+          );
+        }));
+        },
         onTap: () async {
           DateTime now = DateTime.now();
 

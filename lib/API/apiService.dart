@@ -38,8 +38,8 @@ class ApiService {
     }
   }
 
-  Future top() async {
-    Uri urlApi = Uri.parse(base_url + top_airing);
+  Future top(page) async {
+    Uri urlApi = Uri.parse(base_url + top_airing + "?page=$page&perPage=16");
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
       'Accept': 'application/json',

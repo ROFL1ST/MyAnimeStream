@@ -65,7 +65,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   void initState() {
     index = int.parse(widget.currentIndex);
-    top = ApiService().top();
+    top = ApiService().top(1);
     eps = ApiService().episode(widget.slug);
     super.initState();
     if (Platform.isAndroid) WebView.platform = AndroidWebView();

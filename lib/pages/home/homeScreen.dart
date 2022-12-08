@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
 
   void refreshAll() {
     setState(() {
-      top = ApiService().top();
+      top = ApiService().top(1);
       recent = ApiService().recent(1);
       popular = ApiService().popular();
     });
@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    top = ApiService().top();
+    top = ApiService().top(1);
     recent = ApiService().recent(1);
     popular = ApiService().popular();
     super.initState();
@@ -95,7 +95,10 @@ class _HomePageState extends State<HomePage> {
             [
           SliverAppBar(
             floating: true,
-            title: Text("MyNime", style: kTitleTextStyle,),
+            title: Text(
+              "MyNime",
+              style: kTitleTextStyle,
+            ),
             backgroundColor: bg,
             actions: [
               Padding(

@@ -26,7 +26,7 @@ class About extends StatelessWidget {
       body: ListView(children: [
         ListTile(
           title: Text("Version"),
-          subtitle: Text("1.1.0 aniList-API"),
+          subtitle: Text("1.2.0 aniList-API"),
         ),
         ListTile(
           onTap: () {
@@ -59,6 +59,18 @@ class About extends StatelessWidget {
           trailing: Icon(Icons.phone),
           title: Text("Contact Me"),
           subtitle: Text("+6285888768152"),
+        ),
+        ListTile(
+          title: Text("What's New?"),
+          onTap: () {
+            Get.dialog(AlertDialog(
+              backgroundColor: kCardColorDark,
+              content: Text(
+                "(--) New Features ~~~ \n\n(-) Added Top Pages.\n\n(-) Now You Can Show A Pop Up Detail In Top Or Recent By Press It. \n\n(-) Added Content In Search Page Before Focussing on Search Bar \n\n(--) Minor Changes ~~~ \n\n(-) Fixed Error In Some Detail.\n\n(-) Fixed Error When Click On Of Anime Episode In History.\n\n(-) Fixed On Recent Page Can't Go To Second Page and go on. ",
+                style: kSubtitleDetailStyle.copyWith(color: Colors.white),
+              ),
+            ));
+          },
         )
       ]),
     );

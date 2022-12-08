@@ -44,6 +44,12 @@ class _DetailState extends State<Detail> {
     });
   }
 
+  void goNext(slug) {
+    setState(() {
+      detail = ApiService().detail(slug);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -298,28 +304,37 @@ class _DetailState extends State<Detail> {
                                                   ),
                                                   child: Column(
                                                     children: [
-                                                      Container(
-                                                        height:
-                                                            size.height * 0.13,
-                                                        width:
-                                                            size.width * 0.34,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          image:
-                                                              DecorationImage(
-                                                                  image:
-                                                                      CachedNetworkImageProvider(
-                                                                    snapshot
-                                                                        .data
-                                                                        .relations[
-                                                                            index]
-                                                                        .image,
-                                                                  ),
-                                                                  fit: BoxFit
-                                                                      .cover),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          goNext(snapshot
+                                                              .data
+                                                              .relations[index]
+                                                              .id);
+                                                        },
+                                                        child: Container(
+                                                          height: size.height *
+                                                              0.13,
+                                                          width:
+                                                              size.width * 0.34,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            image:
+                                                                DecorationImage(
+                                                                    image:
+                                                                        CachedNetworkImageProvider(
+                                                                      snapshot
+                                                                          .data
+                                                                          .relations[
+                                                                              index]
+                                                                          .image,
+                                                                    ),
+                                                                    fit: BoxFit
+                                                                        .cover),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
                                                         ),
                                                       ),
                                                       SizedBox(
