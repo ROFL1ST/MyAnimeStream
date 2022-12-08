@@ -7,11 +7,11 @@ App for streaming anime for free and no Ads
 - [Android](https://drive.google.com/file/d/1pNEmwHNte3MCEdfhrgWlCX2GRjjhWpnv/view?usp=share_link)
 
 ## ScreenShots
-https://github.com/ROFL1ST/MyAnimeStream/blob/anilist-API/assets/screenshots/Screenshot_2022_12_08_11_36_24_242_com_example_my_anime_stream.jpg
-https://github.com/ROFL1ST/MyAnimeStream/blob/anilist-API/assets/screenshots/Screenshot_2022_12_08_11_36_30_283_com_example_my_anime_stream.jpg
-https://github.com/ROFL1ST/MyAnimeStream/blob/anilist-API/assets/screenshots/Screenshot_2022_12_08_11_36_34_033_com_example_my_anime_stream.jpg
-https://github.com/ROFL1ST/MyAnimeStream/blob/anilist-API/assets/screenshots/Screenshot_2022_12_08_11_37_03_184_com_example_my_anime_stream.jpg
-https://github.com/ROFL1ST/MyAnimeStream/blob/anilist-API/assets/screenshots/Screenshot_2022_12_08_11_37_17_944_com_example_my_anime_stream.jpg
+(https://github.com/ROFL1ST/MyAnimeStream/blob/anilist-API/assets/screenshots/Screenshot_2022_12_08_11_36_24_242_com_example_my_anime_stream.jpg)
+(https://github.com/ROFL1ST/MyAnimeStream/blob/anilist-API/assets/screenshots/Screenshot_2022_12_08_11_36_30_283_com_example_my_anime_stream.jpg)
+(https://github.com/ROFL1ST/MyAnimeStream/blob/anilist-API/assets/screenshots/Screenshot_2022_12_08_11_36_34_033_com_example_my_anime_stream.jpg)
+(https://github.com/ROFL1ST/MyAnimeStream/blob/anilist-API/assets/screenshots/Screenshot_2022_12_08_11_37_03_184_com_example_my_anime_stream.jpg)
+(https://github.com/ROFL1ST/MyAnimeStream/blob/anilist-API/assets/screenshots/Screenshot_2022_12_08_11_37_17_944_com_example_my_anime_stream.jpg)
 
 
 A few resources to get you started if this is your first Flutter project:
