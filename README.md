@@ -4,7 +4,7 @@ App for streaming anime for free and no Ads
 
 ## Download The App
 
-- Android : [1.2.1](https://drive.google.com/file/d/1pNEmwHNte3MCEdfhrgWlCX2GRjjhWpnv/view?usp=share_link)
+- Android : [1.2.1](https://github.com/ROFL1ST/MyAnimeStream/releases/download/MyNIme/MyNime-v1.2.1.apk)
 
 ## ScreenShots
 
