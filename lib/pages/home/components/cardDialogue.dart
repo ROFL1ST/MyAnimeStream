@@ -37,7 +37,7 @@ class _CardDialogueState extends State<CardDialogue> {
       child: Padding(
         padding: EdgeInsets.all(32.0),
         child: Hero(
-           tag: widget.from != 2 ? widget.data.id : widget.data.episodeId,
+          tag: widget.from != 2 ? widget.data.id : widget.data.episodeId,
           child: Material(
             elevation: 2,
             shape: RoundedRectangleBorder(
@@ -87,7 +87,13 @@ class _CardDialogueState extends State<CardDialogue> {
                                   textAlign: TextAlign.center,
                                   style: kListSubtitle,
                                 )
-                              : SizedBox()
+                              : AutoSizeText(
+                                  "Episode : ${widget.data.episodeNumber}",
+                                  maxLines: 2,
+                                  presetFontSizes: [12],
+                                  textAlign: TextAlign.center,
+                                  style: kListSubtitle,
+                                )
                         ],
                       ),
                     ),

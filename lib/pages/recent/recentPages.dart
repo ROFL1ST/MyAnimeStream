@@ -244,50 +244,53 @@ class _RecentPagesState extends State<RecentPages> {
           );
           // arah ke episode yg dituju
         },
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                    color: cardBg,
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: Column(
-                  children: [
-                    Container(
-                      height: size.height * 0.31,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: NetworkImageWithCacheManager(
-                                    imageUrl: data.image,
+        child: Hero(
+          tag: data.episodeId,
+          child: Column(
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: cardBg,
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: size.height * 0.31,
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: NetworkImageWithCacheManager(
+                                      imageUrl: data.image,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: Center(
-                        child: Text(
-                          "Episode ${data.episodeNumber.toString()}",
-                          style: kTitleTextStyle.copyWith(fontSize: 14),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Center(
+                          child: Text(
+                            "Episode ${data.episodeNumber.toString()}",
+                            style: kTitleTextStyle.copyWith(fontSize: 14),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            
-          ],
+              
+            ],
+          ),
         ));
   }
 }

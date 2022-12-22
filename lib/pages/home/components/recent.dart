@@ -142,51 +142,54 @@ class _RecentState extends State<Recent> {
           );
           // arah ke episode yg dituju
         },
-        child: Container(
-          height: size.height * 0.04,
-          decoration: BoxDecoration(
-              color: cardBg,
-              // ignore: prefer_const_constructors
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: size.height * 0.214,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: NetworkImageWithCacheManager(
-                                imageUrl: data.image,
+        child: Hero(
+          tag: data.episodeId,
+          child: Container(
+            height: size.height * 0.04,
+            decoration: BoxDecoration(
+                color: cardBg,
+                // ignore: prefer_const_constructors
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 5),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: size.height * 0.214,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: NetworkImageWithCacheManager(
+                                  imageUrl: data.image,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: Container(
-                    width: size.width,
-                    child: Center(
-                      child: AutoSizeText(
-                        "Episode ${data.episodeNumber.toString()}",
-                        minFontSize: 5,
-                        maxLines: 1,
-                        style: kTitleTextStyle.copyWith(fontSize: 14),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Container(
+                      width: size.width,
+                      child: Center(
+                        child: AutoSizeText(
+                          "Episode ${data.episodeNumber.toString()}",
+                          minFontSize: 5,
+                          maxLines: 1,
+                          style: kTitleTextStyle.copyWith(fontSize: 14),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

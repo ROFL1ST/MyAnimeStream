@@ -133,59 +133,75 @@ class _DetailState extends State<Detail> {
                                 ConnectionState.done) return Text("");
                             if (snapshot.hasError) return Text("");
                             if (snapshot.hasData) {
-                              var episode = snapshot.data.episodes[0];
-                              return Center(
-                                child: Container(
-                                  height: size.height * 0.07,
-                                  width: size.width * 0.15,
-                                  margin: EdgeInsets.only(
-                                    top: size.height * 0.2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.4),
-                                      borderRadius: BorderRadius.circular(250)),
-                                  child: IconButton(
-                                    icon: Icon(
-                                      Icons.play_arrow_rounded,
-                                      size: size.width * 0.075,
-                                    ),
-                                    onPressed: () async {
-                                      DateTime now = DateTime.now();
-
-                                      final history = RecentAnime(
-                                        id: snapshot.data.id,
-                                        episodeId: episode.id,
-                                        currentEp:
-                                            (episode.number - 1).toString(),
-                                        title: snapshot.data.title.romaji,
-                                        image: snapshot.data.image,
-                                        createAt: now.toString(),
-                                        type: snapshot.data.type,
-                                        imageEps: episode.image,
-                                      );
-                                      // log("${history.currentEp}");
-                                      if (historyManager.epsIdList
-                                          .contains(episode.id)) {
-                                        historyManager
-                                            .removeHistory(episode.id);
-                                        historyManager.addHistoryAnime(history);
-                                      } else {
-                                        historyManager.addHistoryAnime(history);
-                                      }
-                                      await Get.to(
-                                        WebViewScreen(
-                                          detail: detail,
-                                          slug: episode.id,
-                                          currentIndex:
-                                              (episode.number - 1).toString(),
-                                          prevPage: "Detail",
-                                          image: episode.image,
+                              return (snapshot.data.episodes.length != 0)
+                                  ? Center(
+                                      child: Container(
+                                        height: size.height * 0.07,
+                                        width: size.width * 0.15,
+                                        margin: EdgeInsets.only(
+                                          top: size.height * 0.2,
                                         ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              );
+                                        decoration: BoxDecoration(
+                                            color:
+                                                Colors.black.withOpacity(0.4),
+                                            borderRadius:
+                                                BorderRadius.circular(250)),
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.play_arrow_rounded,
+                                            size: size.width * 0.075,
+                                          ),
+                                          onPressed: () async {
+                                            DateTime now = DateTime.now();
+
+                                            final history = RecentAnime(
+                                              id: snapshot.data.id,
+                                              episodeId:
+                                                  snapshot.data.episodes[0].id,
+                                              currentEp: (snapshot.data
+                                                          .episodes[0].number -
+                                                      1)
+                                                  .toString(),
+                                              title: snapshot.data.title.romaji,
+                                              image: snapshot.data.image,
+                                              createAt: now.toString(),
+                                              type: snapshot.data.type,
+                                              imageEps: snapshot
+                                                  .data.episodes[0].image,
+                                            );
+                                            // log("${history.currentEp}");
+                                            if (historyManager.epsIdList
+                                                .contains(snapshot
+                                                    .data.episodes[0].id)) {
+                                              historyManager.removeHistory(
+                                                  snapshot.data.episodes[0].id);
+                                              historyManager
+                                                  .addHistoryAnime(history);
+                                            } else {
+                                              historyManager
+                                                  .addHistoryAnime(history);
+                                            }
+                                            await Get.to(
+                                              WebViewScreen(
+                                                detail: detail,
+                                                slug: snapshot
+                                                    .data.episodes[0].id,
+                                                currentIndex: (snapshot
+                                                            .data
+                                                            .episodes[0]
+                                                            .number -
+                                                        1)
+                                                    .toString(),
+                                                prevPage: "Detail",
+                                                image: snapshot
+                                                    .data.episodes[0].image,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox();
                             } else {
                               return Text("");
                             }
